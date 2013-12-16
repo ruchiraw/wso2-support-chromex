@@ -1,4 +1,4 @@
-wsj-chrome-plugin
-=================
+wso2-support-chromex
+====================
 
-This is a chrome extension which gives you a few valuable facts about the support issue being viewed.
+A chrome extension which provides context sensitive help for WSO2 support issue resolution.
