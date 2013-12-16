@@ -1,0 +1,48 @@
+{{!-- this is the thread view --}}
+<div class="messages">
+    <div class="subject">
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>[{{key}}] {{fields.summary.value}}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="row message ash">
+        <div class="col-xs-12">
+            <div class="header">
+                <div class="row title">
+                    <div class="col-xs-10 user"><strong>{{fields.reporter.value.displayName}}</strong></div>
+                    <div class="col-xs-2 time">
+                        <div class="pull-right">{{ago fields.created.value}}</div>
+                    </div>
+                </div>
+                <div class="row summary">
+                    <div class="col-xs-12">{{summarize fields.description.value}}</div>
+                </div>
+            </div>
+            <div class="body hidden">
+                {{{format fields.description.value}}}
+            </div>
+        </div>
+    </div>
+    {{#fields.comment.value}}
+        <div class="row message ash">
+            <div class="col-xs-12">
+                <div class="header">
+                    <div class="row title">
+                        <div class="col-xs-10 user"><strong>{{author.displayName}}</strong></div>
+                        <div class="col-xs-2 time">
+                            <div class="pull-right">{{ago updated}}</div>
+                        </div>
+                    </div>
+                    <div class="row summary">
+                        <div class="col-xs-12">{{summarize body}}</div>
+                    </div>
+                </div>
+                <div class="body hidden">
+                    {{{format body}}}
+                </div>
+            </div>
+        </div>
+    {{/fields.comment.value}}
+</div>

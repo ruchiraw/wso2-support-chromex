@@ -62,24 +62,24 @@ $(function () {
             mails.init($('.contents .gmail'), $('.content-tools .gmail'));
             eye.init($('.contents .eye'), $('.content-tools .eye'));
 
-            /*recent({
-             query: o
-             }, function (err, results) {
-             if (err) {
-             return;
-             }
-             var tasks = [];
-             results.issues.forEach(function (o) {
-             tasks.push(function (cb) {
-             issue(o.key, cb);
-             });
-             });
-             async.parallel(tasks, function (err, issues) {
-             render('jiras', issues, function (err, html) {
-             $('#history').html(html);
-             });
-             });
-             }); */
+            recent({
+                query: o
+            }, function (err, results) {
+                if (err) {
+                    return;
+                }
+                var tasks = [];
+                results.issues.forEach(function (o) {
+                    tasks.push(function (cb) {
+                        issue(o.key, cb);
+                    });
+                });
+                async.parallel(tasks, function (err, issues) {
+                    render('jiras', issues, function (err, html) {
+                        $('#history').html(html);
+                    });
+                });
+            });
             $('.container').show();
         }
     });

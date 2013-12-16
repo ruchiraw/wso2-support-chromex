@@ -10,11 +10,26 @@ var jira = {};
 
     var ISSUE_EPR = URL + '/jira/rest/api/2.0.alpha1/issue/';
 
+    var context = {
+        data: {}
+    };
+
     var url = function (path) {
         return URL + path;
     };
 
+    var decode = function (key) {
+        key = key.trim();
+        var index = key.lastIndexOf('-');
+        return {
+            key: key,
+            project: key.substring(0, index),
+            id: key.substring(index + 1)
+        };
+    };
+
     var issue = function (id, cb) {
+        var data = context.data;
         var o = data[id];
         if (o) {
             cb(false, o);
@@ -52,6 +67,10 @@ var jira = {};
             start: o.start,
             count: o.count
         }, cb);
+    };
+
+    var thread = function (o, cb) {
+
     };
 
     /**
@@ -140,8 +159,116 @@ var jira = {};
         xhr.send(JSON.stringify(data));
     };
 
-    jira.init = function(content, tools, controllers) {
+    jira.init = function (content, tools, controllers) {
+        //page change event
+        radio('page change').subscribe(function (err, id) {
+            if (id !== 'jira') {
+                return;
+            }
+            content.scrollTop(0).perfectScrollbar('update');
+            page.render('jira-tools', {
+                query: context.query.key
+            }, function (err, html) {
+                tools.html(html);
+                $('.search', tools).keydown(function (e) {
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
+                        context.query = $(this).val();
+                        radio('jira search').broadcast(false, context.query);
+                    }
+                });
+            });
+        });
+        //search request from the eye
+        radio('eye search').subscribe(function (err, query) {
+            radio('jira search').broadcast(false, query);
+        });
+        //search response from the eye
+        radio('jira recent result').subscribe(function (err, issues) {
+            page.render('jira', issues, function (err, html) {
+                content.html(html);
+                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
+                    suppressScrollX: true,
+                    minScrollbarLength: 40,
+                    wheelSpeed: 40
+                });
+                $('.back', tools).hide();
+                $('.threads', content).on('click', '.thread a', function (e) {
+                    var id = $(this).data('id');
+                    issue(id, function (err, thread) {
+                        radio('jira thread loaded').broadcast(false, id, thread);
+                    });
+                });
+            });
+            page.render('gmail-controls', {}, function (err, html) {
+                controllers.html(html);
+            });
+        });
+        //search request from jira
+        radio('jira search').subscribe(function (err, query) {
+            if (query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
+                //issue id has been searched
+                var o = decode(query.trim());
+                context.query = o;
+                radio('page load').broadcast(false, 'jira');
+                recent({
+                    query: o
+                }, function (err, results) {
+                    var tasks = [];
+                    results.issues.forEach(function (o) {
+                        tasks.push(function (cb) {
+                            issue(o.key, cb);
+                        });
+                    });
+                    async.parallel(tasks, function (err, issues) {
+                        context.recent = issues;
+                        radio('page loaded').broadcast(false, 'jira');
+                        radio('jira recent result').broadcast(err, issues);
+                    });
+                });
+                return;
+            }
+        });
 
+        radio('jira thread loaded').subscribe(function (err, id, thread) {
+            //radio('page loaded').broadcast(false, 'jira');
+            page.render('thread-jira', thread, function (err, html) {
+                content.html(html);
+                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
+                    suppressScrollX: true,
+                    minScrollbarLength: 40,
+                    wheelSpeed: 40
+                });
+                $('.back', tools).unbind().click(function (e) {
+                    //TODO
+                    radio('jira recent result').broadcast(false, context.recent);
+                }).show();
+                $('.messages', content).on('click', '.message',function (e) {
+                    //showing body
+                    var self = $(this);
+                    var visible = $('.summary', self).hasClass('hidden');
+                    if (visible) {
+                        return;
+                    }
+                    $('.summary', self).addClass('hidden');
+                    $('.body', self).removeClass('hidden');
+                    self.removeClass('ash');
+                    content.perfectScrollbar('update');
+                }).on('click', '.header', function (e) {
+                        //hiding body
+                        var self = $(this);
+                        var visible = $('.summary', self).hasClass('hidden');
+                        if (!visible) {
+                            return;
+                        }
+                        e.stopPropagation();
+                        $('.summary', self).removeClass('hidden');
+                        self.siblings('.body').addClass('hidden');
+                        self.closest('.message').addClass('ash');
+                        content.perfectScrollbar('update');
+                    });
+            });
+        });
     };
 
 }());
