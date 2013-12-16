@@ -1,0 +1,136 @@
+body {
+    min-width: 800px;
+    min-height: 600px;
+    font-size: 12px;
+}
+
+#sandbox {
+    display: none;
+}
+
+.container {
+    padding: 10px 0 0;
+    border-bottom: 1px solid #D8D8D8;
+    width: 800px;
+}
+
+.toolbar {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #D8D8D8;
+}
+
+.pager {
+    margin: 0 10px 0 0;
+}
+
+table {
+    font-size: 12px;
+}
+
+.table .key {
+    width: 90px;
+}
+
+.product-badges .badge {
+    margin-left: 5px;
+}
+
+.product-code {
+    color: #D9534F;
+    font-weight: bold;
+}
+
+.form-control {
+    font-size: 12px;
+    line-height: 14px;
+}
+
+.contents .content {
+    position: relative;
+    overflow: hidden;
+    height: 520px;
+    display: none;
+    border-bottom: 1px solid #D8D8D8;
+}
+
+.pager .btn {
+    width: 50px;
+}
+
+/*
+.pager .content {
+    display: none;
+}
+*/
+
+.tools {
+    margin-left: 10px;
+}
+
+.tools .btn {
+    width: 50px;
+}
+
+.tools .content {
+    display: none;
+}
+
+.toolbar form {
+    margin-bottom: 0;
+}
+
+.toolbar .form-group {
+    margin-bottom: 0;
+}
+
+.toolbar .pager .loading {
+    background: url('/images/ajax-loader.gif') no-repeat transparent center;
+}
+
+/**
+ * toolbar styles
+ */
+
+.pager .stackoverflow {
+    background: url('/images/stackoverflow.png') no-repeat transparent center;
+}
+
+.pager .gmail {
+    background: url('/images/gmail.png') no-repeat transparent center;
+}
+
+.pager .jira {
+    background: url('/images/jira.png') no-repeat transparent center;
+}
+
+.pager .osqa {
+    background: url('/images/osqa.png') no-repeat transparent center;
+}
+
+.pager .faq {
+    background: url('/images/faq.png') no-repeat transparent center;
+}
+
+.pager .eye {
+    background: url('/images/eye.png') no-repeat transparent center;
+}
+
+.pager .active {
+    background-color: #D8D8D8;
+}
+
+.btn:active, .btn.active {
+    box-shadow: none;
+}
+
+.controls {
+    height: 28px;
+}
+
+.controls .content {
+    display: none;
+}
+
+.controllers {
+    padding: 2px 10px;
+}

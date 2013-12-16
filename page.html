@@ -1,0 +1,86 @@
+<html>
+<head>
+    <title>WSO2 Support</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/perfect-scrollbar.css"/>
+    <link rel="stylesheet" href="css/page.css"/>
+    <link rel="stylesheet" href="css/eye.css"/>
+    <link rel="stylesheet" href="css/gmail.css"/>
+    <link rel="stylesheet" href="css/jira.css"/>
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: http://developer.chrome.com/extensions/contentSecurityPolicy.html
+     -->
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.mousewheel.js"></script>
+    <script src="js/perfect-scrollbar.js"></script>
+    <script src="js/async.js"></script>
+    <script src="js/radio.min.js"></script>
+
+    <script src="js/page.js"></script>
+    <script src="js/eye.js"></script>
+    <script src="js/gmail.js"></script>
+    <script src="js/jira.js"></script>
+    <!--<script src="js/core.js"></script>
+    <script src="js/jira.js"></script>-->
+</head>
+<body>
+<iframe id="sandbox" src="sandbox.html"></iframe>
+<div class="container">
+    <div class="toolbar">
+        <div class="row">
+            <div class="col-xs-7">
+                <div class="btn-toolbar tools" role="toolbar">
+                    <div class="eye content active"></div>
+                    <div class="gmail content"></div>
+                    <div class="jira content"></div>
+                    <div class="stackoverflow content"></div>
+                    <div class="faq content"></div>
+                    <div class="osqa content"></div>
+                </div>
+            </div>
+            <div class="col-xs-5">
+                <div class="btn-toolbar" role="toolbar">
+                    <div class="pager btn-group btn-group-sm pull-right">
+                        <button type="button" class="btn btn-default eye active" data-id="eye"></button>
+                        <button type="button" class="btn btn-default gmail" data-id="gmail"></button>
+                        <button type="button" class="btn btn-default jira" data-id="jira"></button>
+                        <button type="button" class="btn btn-default stackoverflow" data-id="stackoverflow"></button>
+                        <button type="button" class="btn btn-default faq" data-id="faq"></button>
+                        <button type="button" class="btn btn-default osqa" data-id="osqa"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="contents">
+        <div class="eye content active"></div>
+        <div class="gmail content"></div>
+        <div class="jira content"></div>
+        <div class="stackoverflow content"></div>
+        <div class="faq content"></div>
+        <div class="osqa content"></div>
+    </div>
+    <div class="controls">
+        <div class="row">
+            <div class="col-xs-7">
+                <div class="btn-toolbar controllers" role="toolbar">
+                    <div class="eye content active"></div>
+                    <div class="gmail content"></div>
+                    <div class="jira content"></div>
+                    <div class="stackoverflow content"></div>
+                    <div class="faq content"></div>
+                    <div class="osqa content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+
+</body>
+</html>
+

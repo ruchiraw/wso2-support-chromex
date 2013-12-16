@@ -1,0 +1,30 @@
+{{!-- this is the thread view --}}
+<div class="messages">
+    <div class="subject">
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>{{subject}}</h4>
+            </div>
+        </div>
+    </div>
+    {{#thread}}
+        <div class="row message ash">
+            <div class="col-xs-12">
+                <div class="header">
+                    <div class="row title">
+                        <div class="col-xs-10 user">{{{uname user}}}</div>
+                        <div class="col-xs-2 time">
+                            <div class="pull-right">{{ago time}}</div>
+                        </div>
+                    </div>
+                    <div class="row summary">
+                        <div class="col-xs-12">{{summarize body}}</div>
+                    </div>
+                </div>
+                <div class="body hidden">
+                    {{{body}}}
+                </div>
+            </div>
+        </div>
+    {{/thread}}
+</div>

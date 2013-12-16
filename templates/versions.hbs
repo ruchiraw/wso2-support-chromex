@@ -1,0 +1,13 @@
+<table class="table table-striped">
+    <tbody>
+    {{#.}}
+        <tr>
+            <td class="product-badges">
+                {{#versions}}
+                    <a href="#" class="badge" data-content="{{format ../content}}">{{.}}</a>
+                {{/versions}}
+            </td>
+        </tr>
+    {{/.}}
+    </tbody>
+</table>
