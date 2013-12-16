@@ -6,6 +6,8 @@ var gmail = {};
 
     var context = {};
 
+    var initialized = false;
+
     var search = function (query) {
         //search gmail for the query
         var xhr = new XMLHttpRequest();
@@ -41,18 +43,21 @@ var gmail = {};
                 return;
             }
             content.scrollTop(0).perfectScrollbar('update');
-            page.render('gmail-tools', {
-                query: context.query
-            }, function (err, html) {
-                tools.html(html);
-                $('.search', tools).keydown(function (e) {
-                    if (e.keyCode == 13) {
-                        e.preventDefault();
-                        context.query = $(this).val();
-                        radio('gmail search').broadcast(false, context.query);
-                    }
+            if (!initialized) {
+                initialized = true;
+                page.render('gmail-tools', {
+                    query: context.query
+                }, function (err, html) {
+                    tools.html(html);
+                    $('.search', tools).keydown(function (e) {
+                        if (e.keyCode == 13) {
+                            e.preventDefault();
+                            context.query = $(this).val();
+                            radio('gmail search').broadcast(false, context.query);
+                        }
+                    });
                 });
-            });
+            }
         });
 
         //search request from the eye
