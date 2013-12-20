@@ -18,6 +18,7 @@
         "https://fonts.googleapis.com/",
         "https://accounts.google.com/",
         "tabs",
-        "notifications"
+        "notifications",
+        "<all_urls>"
     ]
 }

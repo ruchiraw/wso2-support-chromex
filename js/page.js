@@ -73,13 +73,21 @@ $(function () {
             active: true
         }, function (tabs) {
             var tab = tabs[0];
-            if (tab.url.indexOf(ISSUE_PREFIX) === 0) {
-                var o = decodeUrl(tab.url);
-                radio('eye search').broadcast(false, o.key);
-                radio('page change').broadcast(false, 'gmail');
-            } else {
-                radio('page change').broadcast(false, 'eye');
-            }
+            chrome.tabs.executeScript({
+                code: 'window.getSelection().toString();'
+            }, function (selection) {
+                selection = selection[0];
+                if (selection) {
+                    radio('eye search').broadcast(false, '"' + selection + '"');
+                    radio('page change').broadcast(false, 'gmail');
+                } else if (tab.url.indexOf(ISSUE_PREFIX) === 0) {
+                    var o = decodeUrl(tab.url);
+                    radio('eye search').broadcast(false, o.key);
+                    radio('page change').broadcast(false, 'gmail');
+                } else {
+                    radio('page change').broadcast(false, 'eye');
+                }
+            });
         });
     });
 
