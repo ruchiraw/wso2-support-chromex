@@ -8,6 +8,7 @@
 <head>
     <script src="js/handlebars.js"></script>
     <script src="js/moment.min.js"></script>
+    <script src="js/hiliter.js"></script>
 </head>
 <body>
 <script>
@@ -60,6 +61,10 @@
         return str.substring(0, str.lastIndexOf(' '));
     });
 
+    Handlebars.registerHelper('hilit', function (context, block) {
+        return new Handlebars.SafeString(hiliter.search(context.hash.query, context.fn(this)));
+    });
+
     Handlebars.registerHelper('uname', function (str) {
         return '<strong>' + str.substring(0, str.indexOf(' <')) + '</strong>';
     });
@@ -69,7 +74,7 @@
     });
 
     Handlebars.registerHelper('format', function (str) {
-        return format(str);
+        return new Handlebars.SafeString(format(str));
     });
 
     /**

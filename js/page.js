@@ -76,7 +76,7 @@ $(function () {
             chrome.tabs.executeScript({
                 code: 'window.getSelection().toString();'
             }, function (selection) {
-                selection = selection[0];
+                selection = selection ? selection[0] : null;
                 if (selection) {
                     radio('eye search').broadcast(false, '"' + selection + '"');
                     radio('page change').broadcast(false, 'gmail');

@@ -134,3 +134,7 @@ table {
 .controllers {
     padding: 2px 10px;
 }
+
+.hiliter {
+    background-color: #8FBC8F;
+}

@@ -99,9 +99,11 @@ var gmail = {};
         radio('gmail thread loaded').subscribe(function (err, id, subject, thread) {
             radio('page loaded').broadcast(false, 'gmail');
             thread = {
+                query: context.query.substring(1, context.query.length - 1),
                 subject: subject,
                 thread: thread
             };
+            console.log(thread.query);
             page.render('thread', thread, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
