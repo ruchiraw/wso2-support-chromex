@@ -63,12 +63,16 @@
     border-bottom: none;
 }
 
-.controls .prev {
+.controls .gmail .prev {
     background: url('/images/prev.png') no-repeat transparent center;
 }
 
-.controls .next {
+.controls .gmail .next {
     background: url('/images/next.png') no-repeat transparent center;
+}
+
+.controls .gmail .popup {
+    background: url('/images/popup.png') no-repeat transparent center;
 }
 
 .controllers .btn-group-sm .btn {

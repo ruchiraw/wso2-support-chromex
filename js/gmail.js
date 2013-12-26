@@ -66,6 +66,7 @@ var gmail = {};
         });
         //search request from gmail
         radio('gmail search').subscribe(function (err, query) {
+            context.id = null;
             context.query = query;
             radio('page load').broadcast(false, 'gmail');
             search(query);
@@ -93,11 +94,34 @@ var gmail = {};
             });
             page.render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);
+                $('.popup', controllers).click(function (e) {
+                    chrome.tabs.query({
+                        url: 'https://mail.google.com/mail/u/0/*'
+                    }, function (tabs) {
+                        var url = 'https://mail.google.com/mail/u/0/#search/' +
+                            encodeURIComponent(context.query) + (context.id ? '/' + context.id : '');
+                        if (!tabs.length) {
+                            //create a new tab
+                            chrome.tabs.create({
+                                url: url
+                            });
+                            return;
+                        }
+                        chrome.tabs.update(tabs[0].id, {
+                            url: url
+                        });
+                    });
+                });
             });
         });
 
         radio('gmail thread loaded').subscribe(function (err, id, subject, thread) {
             radio('page loaded').broadcast(false, 'gmail');
+            if (!thread.length) {
+                //TODO: no result message
+                return;
+            }
+            context.id = thread[0].id;
             thread = {
                 query: context.query.substring(1, context.query.length - 1),
                 subject: subject,
