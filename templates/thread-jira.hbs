@@ -17,11 +17,11 @@
                     </div>
                 </div>
                 <div class="row summary">
-                    <div class="col-xs-12">{{summarize fields.description.value}}</div>
+                    <div class="col-xs-12">{{summarize fields.description.html}}</div>
                 </div>
             </div>
             <div class="body hidden">
-                {{{format fields.description.value}}}
+                {{{fields.description.html}}}
             </div>
         </div>
     </div>
@@ -36,11 +36,11 @@
                         </div>
                     </div>
                     <div class="row summary">
-                        <div class="col-xs-12">{{summarize body}}</div>
+                        <div class="col-xs-12">{{summarize html}}</div>
                     </div>
                 </div>
                 <div class="body hidden">
-                    {{{format body}}}
+                    {{{html}}}
                 </div>
             </div>
         </div>

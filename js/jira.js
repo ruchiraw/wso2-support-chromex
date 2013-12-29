@@ -37,11 +37,17 @@ var jira = {};
         }
 
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', ISSUE_EPR + id, true);
+        xhr.open('GET', ISSUE_EPR + id + '?expand=html', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function (e) {
             if (xhr.status === 200) {
                 o = JSON.parse(xhr.responseText);
+                var comments = o.html.comment;
+                var i = 0;
+                o.fields.description.html = o.html.description;
+                o.fields.comment.value.forEach(function (c) {
+                    c.html = comments[i++];
+                });
                 cb(false, o);
                 data[id] = o;
             } else {
