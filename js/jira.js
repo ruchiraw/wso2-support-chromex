@@ -2,8 +2,6 @@ var jira = {};
 
 (function () {
 
-    var data = {};
-
     var URL = (jira.URL = 'https://support.wso2.com');
 
     var SEARCH_EPR = URL + '/jira/rest/api/2.0.alpha1/search';

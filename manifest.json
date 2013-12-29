@@ -17,6 +17,7 @@
         "https://www.google.com/",
         "https://fonts.googleapis.com/",
         "https://accounts.google.com/",
+        "https://api.stackexchange.com/",
         "tabs",
         "notifications",
         "<all_urls>"

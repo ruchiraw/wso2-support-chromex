@@ -138,3 +138,63 @@ table {
 .hiliter {
     background-color: #FFC;
 }
+
+.content .thread .details {
+    padding: 8px 5px;
+    border: 1px solid #D8D8D8;
+    border-bottom: none;
+}
+
+.content .message .header {
+    cursor: pointer;
+    padding-top: 10px;
+}
+
+.content .message .body {
+    margin-top: 10px;
+}
+
+.content .message .header .summary {
+    color: #777;
+}
+
+.content .ash {
+    background-color: rgba(0, 0, 0, .04);
+}
+
+.content .message {
+    padding: 0 6px 10px;
+    border: 1px solid #D8D8D8;
+    border-bottom: none;
+}
+
+.content .messages .subject {
+    padding: 10px 6px;
+}
+
+.tools .content .back {
+    background: url('/images/back.png') no-repeat transparent center;
+    display: none;
+}
+
+.tools .content .search {
+    padding: 2px 5px 2px 5px;
+    height: 30px;
+}
+
+.controls .gmail .prev {
+    background: url('/images/prev.png') no-repeat transparent center;
+}
+
+.controls .gmail .next {
+    background: url('/images/next.png') no-repeat transparent center;
+}
+
+.controls .gmail .popup {
+    background: url('/images/popup.png') no-repeat transparent center;
+}
+
+.controllers .btn-group-sm .btn {
+    padding: 2px 5px;
+    width: 40px;
+}

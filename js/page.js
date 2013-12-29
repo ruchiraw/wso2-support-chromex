@@ -6,7 +6,7 @@ $(function () {
     var tools = $('.tools');
     var controllers = $('.controllers');
 
-    var pages = ['eye', 'gmail', 'jira'];
+    var pages = ['eye', 'gmail', 'jira', 'stackoverflow'];
 
     var contexts = {};
 
