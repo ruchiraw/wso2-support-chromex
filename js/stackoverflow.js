@@ -72,6 +72,7 @@ var stackoverflow = {};
         });
         //search response from the eye
         radio('stackoverflow results').subscribe(function (err, query, threads) {
+            context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
             page.render('stackoverflow', threads, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
@@ -105,7 +106,6 @@ var stackoverflow = {};
         radio('stackoverflow search').subscribe(function (err, query) {
             if (!query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
-                context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
                 context.query = query;
                 radio('page load').broadcast(false, 'stackoverflow');
                 search(query, function (err, threads) {
