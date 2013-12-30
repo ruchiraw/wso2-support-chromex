@@ -82,7 +82,9 @@ var stackoverflow = {};
                 $('.back', tools).hide();
                 $('.threads', content).on('click', '.thread a', function (e) {
                     var id = $(this).data('id');
+                    radio('page load').broadcast(false, 'stackoverflow');
                     thread(id, function (err, id, thread) {
+                        radio('page loaded').broadcast(false, 'stackoverflow');
                         radio('stackoverflow thread loaded').broadcast(false, id, thread);
                     });
                 });
@@ -96,8 +98,10 @@ var stackoverflow = {};
             if (!query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
                 context.query = query;
+                radio('page load').broadcast(false, 'stackoverflow');
                 search(query, function (err, threads) {
                     console.log(threads);
+                    radio('page loaded').broadcast(false, 'stackoverflow');
                     radio('stackoverflow results').broadcast(false, query, threads);
                 });
 
