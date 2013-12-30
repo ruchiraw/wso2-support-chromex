@@ -103,12 +103,14 @@ var gmail = {};
                         if (!tabs.length) {
                             //create a new tab
                             chrome.tabs.create({
-                                url: url
+                                url: url,
+                                active: false
                             });
                             return;
                         }
                         chrome.tabs.update(tabs[0].id, {
-                            url: url
+                            url: url,
+                            active: false
                         });
                     });
                 });

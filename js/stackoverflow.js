@@ -12,7 +12,7 @@ var stackoverflow = {};
 
     var search = function (query, cb) {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=activity&site=stackoverflow&filter=!9f*CwKRWa&q=' + query, true);
+        xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=relevance&site=stackoverflow&filter=!9f*CwKRWa&q=' + query, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function (e) {
             if (xhr.status === 200) {
@@ -82,6 +82,7 @@ var stackoverflow = {};
                 $('.back', tools).hide();
                 $('.threads', content).on('click', '.thread a', function (e) {
                     var id = $(this).data('id');
+                    context.url = $(this).data('url');
                     radio('page load').broadcast(false, 'stackoverflow');
                     thread(id, function (err, id, thread) {
                         radio('page loaded').broadcast(false, 'stackoverflow');
@@ -91,12 +92,20 @@ var stackoverflow = {};
             });
             page.render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);
+                $('.popup', controllers).click(function (e) {
+                    //create a new tab
+                    chrome.tabs.create({
+                        url: context.url,
+                        active: false
+                    });
+                });
             });
         });
         //search request from stackoverflow
         radio('stackoverflow search').subscribe(function (err, query) {
             if (!query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
+                context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
                 context.query = query;
                 radio('page load').broadcast(false, 'stackoverflow');
                 search(query, function (err, threads) {

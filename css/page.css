@@ -182,15 +182,15 @@ table {
     height: 30px;
 }
 
-.controls .gmail .prev {
+.controls .content .prev {
     background: url('/images/prev.png') no-repeat transparent center;
 }
 
-.controls .gmail .next {
+.controls .content .next {
     background: url('/images/next.png') no-repeat transparent center;
 }
 
-.controls .gmail .popup {
+.controls .content .popup {
     background: url('/images/popup.png') no-repeat transparent center;
 }
 
