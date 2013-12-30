@@ -4,20 +4,23 @@ var stackoverflow = {};
 
     var ENDPOINT = 'https://api.stackexchange.com/2.1/';
 
+    var RESULT_COUNT = 20;
+
     var initialized = false;
 
     var context = {
         data: {}
     };
 
-    var search = function (query, cb) {
+    var search = function (query, cb, paging) {
+        paging = paging || { page: 1 };
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=relevance&site=stackoverflow&filter=!9f*CwKRWa&q=' + query, true);
+        xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=relevance&site=stackoverflow&filter=!9f*CwKRWa&page=' + paging.page + '&pagesize=' + RESULT_COUNT + '&q=' + query, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function (e) {
             if (xhr.status === 200) {
                 context.data = JSON.parse(xhr.responseText).items;
-                cb(false, context.data);
+                cb(false, context.data, paging);
             } else {
                 cb(true, xhr.statusText);
             }
@@ -71,7 +74,7 @@ var stackoverflow = {};
             radio('stackoverflow search').broadcast(false, query);
         });
         //search response from the eye
-        radio('stackoverflow results').subscribe(function (err, query, threads) {
+        radio('stackoverflow results').subscribe(function (err, query, threads, paging) {
             context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
             page.render('stackoverflow', threads, function (err, html) {
                 content.html(html);
@@ -93,6 +96,27 @@ var stackoverflow = {};
             });
             page.render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);
+                $('.paging', controllers).data('page', paging.page);
+                if (threads.length < RESULT_COUNT) {
+                    $('.next', controllers).attr('disabled', 'disabled');
+                } else {
+                    $('.next', controllers).click(function (e) {
+                        var page = parseInt($(this).parent().data('page'), 10) + 1;
+                        radio('stackoverflow search').broadcast(false, query, {
+                            page: page
+                        });
+                    }).removeAttr('disabled');
+                }
+                if (paging.page == 1) {
+                    $('.prev', controllers).attr('disabled', 'disabled');
+                } else {
+                    $('.prev', controllers).click(function (e) {
+                        var page = parseInt($(this).parent().data('page'), 10) - 1;
+                        radio('stackoverflow search').broadcast(false, query, {
+                            page: page
+                        });
+                    }).removeAttr('disabled');
+                }
                 $('.popup', controllers).click(function (e) {
                     //create a new tab
                     chrome.tabs.create({
@@ -103,17 +127,17 @@ var stackoverflow = {};
             });
         });
         //search request from stackoverflow
-        radio('stackoverflow search').subscribe(function (err, query) {
+        radio('stackoverflow search').subscribe(function (err, query, paging) {
             if (!query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
                 context.query = query;
+                context.paging = paging;
                 radio('page load').broadcast(false, 'stackoverflow');
-                search(query, function (err, threads) {
+                search(query, function (err, threads, paging) {
                     console.log(threads);
                     radio('page loaded').broadcast(false, 'stackoverflow');
-                    radio('stackoverflow results').broadcast(false, query, threads);
-                });
-
+                    radio('stackoverflow results').broadcast(false, query, threads, paging);
+                }, paging);
             }
         });
 
@@ -147,7 +171,7 @@ var stackoverflow = {};
                 });
                 $('.back', tools).unbind().click(function (e) {
                     //TODO
-                    radio('stackoverflow results').broadcast(false, context.query, context.data);
+                    radio('stackoverflow results').broadcast(false, context.query, context.data, context.paging);
                 }).show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body

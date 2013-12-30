@@ -71,6 +71,7 @@ var gmail = {};
         radio('gmail search').subscribe(function (err, query, paging) {
             context.id = null;
             context.query = query;
+            context.paging = paging;
             radio('page load').broadcast(false, 'gmail');
             search(query, paging);
         });
@@ -164,7 +165,7 @@ var gmail = {};
                     wheelSpeed: 40
                 });
                 $('.back', tools).unbind().click(function (e) {
-                    radio('gmail searched').broadcast(false, context.query, context.threads);
+                    radio('gmail searched').broadcast(false, context.query, context.threads, context.paging);
                 }).show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body
