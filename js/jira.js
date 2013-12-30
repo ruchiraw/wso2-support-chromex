@@ -6,11 +6,14 @@ var jira = {};
 
     var SEARCH_EPR = URL + '/jira/rest/api/2.0.alpha1/search';
 
+    var RESULT_COUNT = 10;
+
     var ISSUE_EPR = URL + '/jira/rest/api/2.0.alpha1/issue/';
 
     var initialized = false;
 
     var context = {
+        type: 'history',
         data: {}
     };
 
@@ -48,8 +51,8 @@ var jira = {};
                 o.fields.comment.value.forEach(function (c) {
                     c.html = comments[i++];
                 });
-                cb(false, o);
                 data[id] = o;
+                cb(false, o);
             } else {
                 cb(true, xhr.statusText);
             }
@@ -57,22 +60,26 @@ var jira = {};
         xhr.send(null);
     };
 
-    var recent = function (o, cb) {
+    var recent = function (o, paging, cb) {
         var order = (o.sort === 'asc' ? 'ASC' : 'DESC');
         searchJira({
-            query: 'project = ' + o.query.project + ' ORDER BY key ' + order + ', status ' + order + ', priority ' + order,
-            start: o.start,
-            count: o.count
-        }, cb);
+            query: 'project = ' + o.query.project + ' ORDER BY key ' + order + ', status ' + order + ', priority ' + order
+        }, paging, cb);
     };
 
-    var history = function (o, cb) {
-        var order = (o.sort === 'asc' ? 'ASC' : 'DESC');
-        searchJira({
-            query: 'project = ' + o.query.project + ' ORDER BY key ' + order + ', status ' + order + ', priority ' + order,
-            start: o.start,
-            count: o.count
-        }, cb);
+    var history = function (o, paging, cb) {
+        var i, length, start,
+            results = {
+                issues: []
+            };
+        start = o.query.id > paging.start ? o.query.id - paging.start : 0;
+        length = start - RESULT_COUNT > 0 ? start - RESULT_COUNT : 0;
+        for (i = start; i > length; i--) {
+            results.issues.push({
+                key: o.query.project + '-' + i
+            });
+        }
+        cb(false, results);
     };
 
     var thread = function (o, cb) {
@@ -146,7 +153,7 @@ var jira = {};
         });
     };
 
-    var searchJira = function (o, cb) {
+    var searchJira = function (o, paging, cb) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', SEARCH_EPR, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -159,8 +166,8 @@ var jira = {};
         };
         var data = {
             jql: o.query,
-            startAt: o.start || 0,
-            maxResults: o.count || 10
+            startAt: paging.start,
+            maxResults: paging.count
         };
         xhr.send(JSON.stringify(data));
     };
@@ -193,7 +200,8 @@ var jira = {};
             radio('jira search').broadcast(false, query);
         });
         //search response from the eye
-        radio('jira recent result').subscribe(function (err, issues) {
+        radio('jira results').subscribe(function (err, query, issues, paging) {
+            context.issues = issues;
             page.render('jira', issues, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
@@ -209,32 +217,76 @@ var jira = {};
                     });
                 });
             });
-            page.render('gmail-controls', {}, function (err, html) {
+            page.render('jira-controls', {}, function (err, html) {
                 controllers.html(html);
+                $('.paging', controllers).data('start', paging.start);
+                if (issues.length < RESULT_COUNT) {
+                    $('.next', controllers).attr('disabled', 'disabled');
+                } else {
+                    $('.next', controllers).click(function (e) {
+                        var start = parseInt($(this).parent().data('start'), 10) + RESULT_COUNT;
+                        radio('jira search').broadcast(false, context.query.key, {
+                            start: start,
+                            count: RESULT_COUNT
+                        });
+                    }).removeAttr('disabled');
+                }
+                if (paging.start == 0) {
+                    $('.prev', controllers).attr('disabled', 'disabled');
+                } else {
+                    $('.prev', controllers).click(function (e) {
+                        var start = parseInt($(this).parent().data('start'), 10) - RESULT_COUNT;
+                        radio('jira search').broadcast(false, context.query.key, {
+                            start: start,
+                            count: RESULT_COUNT
+                        });
+                    }).removeAttr('disabled');
+                }
+                $('.history', controllers).click(function (e) {
+                    context.type = 'history';
+                    $('.tabs .btn', controllers).removeClass('active');
+                    $(this).addClass('active');
+                    radio('jira search').broadcast(false, context.query.key);
+                });
+                $('.recent', controllers).click(function (e) {
+                    context.type = 'recent';
+                    $('.tabs .btn', controllers).removeClass('active');
+                    $(this).addClass('active');
+                    radio('jira search').broadcast(false, context.query.key);
+                });
+                $('.' + context.type, controllers).addClass('active');
             });
         });
         //search request from jira
-        radio('jira search').subscribe(function (err, query) {
+        radio('jira search').subscribe(function (err, query, paging) {
             if (query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
                 var o = decode(query.trim());
                 context.query = o;
+                paging = paging || {
+                    start: 0,
+                    count: RESULT_COUNT
+                };
+                context.paging = paging;
                 radio('page load').broadcast(false, 'jira');
-                recent({
+
+                (context.type === 'history' ? history : recent)({
                     query: o
-                }, function (err, results) {
+                }, paging, function (err, results) {
                     var tasks = [];
-                    results.issues.forEach(function (o) {
+                    results.issues.forEach(function (obj) {
                         tasks.push(function (cb) {
-                            issue(o.key, cb);
+                            //TODO ????
+                            issue(obj.key, cb);
                         });
                     });
                     async.parallel(tasks, function (err, issues) {
-                        context.recent = issues;
+                        //context[context.type] = issues;
                         radio('page loaded').broadcast(false, 'jira');
-                        radio('jira recent result').broadcast(err, issues);
+                        radio('jira results').broadcast(err, query, issues, paging);
                     });
                 });
+
                 return;
             }
         });
@@ -250,7 +302,7 @@ var jira = {};
                 });
                 $('.back', tools).unbind().click(function (e) {
                     //TODO
-                    radio('jira recent result').broadcast(false, context.recent);
+                    radio('jira results').broadcast(false, context.query, context.issues, context.paging);
                 }).show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body

@@ -1,0 +1,11 @@
+.controls .jira .history {
+    background: url('/images/history.png') no-repeat transparent center;
+}
+
+.controls .jira .recent {
+    background: url('/images/recent.png') no-repeat transparent center;
+}
+
+.controls .jira .btn.active {
+    background-color: #D8D8D8;
+}
