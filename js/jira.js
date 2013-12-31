@@ -328,6 +328,12 @@ var jira = {};
                         self.closest('.message').addClass('ash');
                         content.perfectScrollbar('update');
                     });
+                $('.popup', controllers).click(function (e) {
+                    chrome.tabs.create({
+                        url: URL + '/jira/browse/' + id,
+                        active: false
+                    });
+                }).removeClass('hidden');
             });
         });
     };
