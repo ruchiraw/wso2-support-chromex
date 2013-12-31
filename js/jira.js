@@ -31,6 +31,34 @@ var jira = {};
         };
     };
 
+    var v = function (issues) {
+        console.log(issues);
+        var regex = /(?:[a-zA-Z]+[\s-]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\s/ig;
+        issues.forEach(function (issue) {
+            var description = issue.fields.description;
+            var a = description.value.match(regex);
+            var all = [];
+            if (a && a.length) {
+                description.v = a;
+                all = a;
+            }
+            var comments = issue.fields.comment.value;
+            comments.forEach(function (comment) {
+                var a = comment.body.match(regex);
+                if (a && a.length) {
+                    comment.v = a;
+                    all = all.concat(a);
+                }
+            });
+            //all = "a wso2 esb 4.5.1 and esb wso2 application server 5.1 esb several bps version we have is 2.0.1 and also there is another cluster of ESB 4.8.0 servers".match(/(?:[a-zA-Z]+[\s]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\b/ig);
+            issue.allv = all;
+        });
+    };
+
+    var p = function (issues) {
+
+    };
+
     var issue = function (id, cb) {
         var data = context.data;
         var o = data[id];
@@ -216,6 +244,27 @@ var jira = {};
                         radio('jira thread loaded').broadcast(false, id, thread);
                     });
                 });
+
+                //TODO
+                if (versions.length) {
+                    $('.details > .info .version', content).data('versions', versions);
+                    content.on('click', '.details > .info .version', function (e) {
+                        e.stopPropagation();
+                        $('.details .popper', content).popover('destroy');
+                        var self = $(this);
+                        self.popover('destroy').popover({
+                            content: function () {
+                                return self.siblings('.version-popper').html();
+                            },
+                            placement: 'left',
+                            trigger: 'manual',
+                            html: true
+                        }).popover('show');
+                    });
+                }
+                content.on('click', function (e) {
+                    $('.details .popper', content).popover('destroy');
+                });
             });
             page.render('jira-controls', {}, function (err, html) {
                 controllers.html(html);
@@ -282,11 +331,12 @@ var jira = {};
                     });
                     async.parallel(tasks, function (err, issues) {
                         //context[context.type] = issues;
+                        v(issues);
+                        p(issues);
                         radio('page loaded').broadcast(false, 'jira');
                         radio('jira results').broadcast(err, query, issues, paging);
                     });
                 });
-
                 return;
             }
         });
@@ -339,3 +389,5 @@ var jira = {};
     };
 
 }());
+
+//"a wso2 esb 4.5.1 and esb wso2 application server 5.1 esb several bps version we have is 2.0.1 and also there is another cluster of ESB 4.8.0 servers".match(/(?:[a-zA-Z]+[\s]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\b/ig)

@@ -198,3 +198,7 @@ table {
     padding: 2px 5px;
     width: 40px;
 }
+
+.popover {
+    min-width: 200px!important;
+}

@@ -3,9 +3,29 @@
         <div class="row thread">
             <div class="col-xs-12">
                 <div class="row details">
-                    <div class="col-xs-9 subject"><a href="#" data-id="{{key}}">[{{key}}] {{fields.summary.value}}</a></div>
-                    <div class="col-xs-3 time">
-                        <!--<div class="pull-right">{{ago updated}}</div>-->
+                    <div class="col-xs-10 subject">
+                        <a href="#" data-id="{{key}}">[{{key}}] {{fields.summary.value}}</a>
+                    </div>
+                    <div class="col-xs-2 info">
+                        <div class="pull-right">
+                            {{#if allv.length}}
+                                <button type="button" class="btn btn-info btn-xs popper version">
+                                    <strong>V</strong>
+                                </button>
+                                <div class="version-popper hidden">
+                                    <div class="versions">
+                                        <table class="table table-striped">
+                                            {{#allv}}
+                                                <tr>
+                                                    <td>{{.}}</td>
+                                                </tr>
+                                            {{/allv}}
+                                        </table>
+                                    </div>
+                                </div>
+                            {{/if}}
+                            <!--<button type="button" class="btn btn-danger btn-xs popper patch"><strong>P</strong></button>-->
+                        </div>
                     </div>
                 </div>
             </div>
