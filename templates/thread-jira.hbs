@@ -11,14 +11,21 @@
         <div class="col-xs-12">
             <div class="header">
                 <div class="row title">
-                    <div class="col-xs-10 user"><strong>{{fields.reporter.value.displayName}}</strong></div>
-                    <div class="col-xs-2 time">
-                        {{#if fields.description.v}}
-                            <button type="button" class="btn btn-info btn-xs popper version">
-                                <strong>V</strong>
-                            </button>
-                        {{/if}}
-                        <div class="pull-right">{{ago fields.created.value}}</div>
+                    <div class="col-xs-9 user"><strong>{{fields.reporter.value.displayName}}</strong></div>
+                    <div class="col-xs-3 time">
+                        <div class="pull-right">
+                            <!--<span class="updated">{{ago fields.created.value}}</span>-->
+                            {{#if fields.description.v}}
+                                <button type="button" class="btn btn-info btn-xs popper version">
+                                    <strong>V</strong>
+                                </button>
+                            {{/if}}
+                            {{#if fields.description.p}}
+                                <button type="button" class="btn btn-danger btn-xs popper patch">
+                                    <strong>P</strong>
+                                </button>
+                            {{/if}}
+                        </div>
                     </div>
                 </div>
                 <div class="row summary">
@@ -35,14 +42,21 @@
             <div class="col-xs-12">
                 <div class="header">
                     <div class="row title">
-                        <div class="col-xs-10 user"><strong>{{author.displayName}}</strong></div>
-                        <div class="col-xs-2 time">
-                            {{#if v}}
-                                <button type="button" class="btn btn-info btn-xs popper version">
-                                    <strong>V</strong>
-                                </button>
-                            {{/if}}
-                            <div class="pull-right">{{ago updated}}</div>
+                        <div class="col-xs-9 user"><strong>{{author.displayName}}</strong></div>
+                        <div class="col-xs-3 time">
+                            <div class="pull-right">
+                                <!--<span class="updated">{{ago updated}}</span>-->
+                                {{#if v}}
+                                    <button type="button" class="btn btn-info btn-xs popper version">
+                                        <strong>V</strong>
+                                    </button>
+                                {{/if}}
+                                {{#if p}}
+                                    <button type="button" class="btn btn-danger btn-xs popper patch">
+                                        <strong>P</strong>
+                                    </button>
+                                {{/if}}
+                            </div>
                         </div>
                     </div>
                     <div class="row summary">

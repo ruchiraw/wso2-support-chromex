@@ -24,6 +24,22 @@
                                     </div>
                                 </div>
                             {{/if}}
+                            {{#if allp.length}}
+                                <button type="button" class="btn btn-danger btn-xs popper patch">
+                                    <strong>P</strong>
+                                </button>
+                                <div class="patch-popper hidden">
+                                    <div class="patches">
+                                        <table class="table table-striped">
+                                            {{#allp}}
+                                                <tr>
+                                                    <td>{{.}}</td>
+                                                </tr>
+                                            {{/allp}}
+                                        </table>
+                                    </div>
+                                </div>
+                            {{/if}}
                             <!--<button type="button" class="btn btn-danger btn-xs popper patch"><strong>P</strong></button>-->
                         </div>
                     </div>
