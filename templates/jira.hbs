@@ -8,8 +8,18 @@
                     </div>
                     <div class="col-xs-2 info">
                         <div class="pull-right">
+                            {{#if fields.environment.value}}
+                                <button type="button" class="btn btn-success btn-xs popper version" data-id="environment">
+                                    <strong>E</strong>
+                                </button>
+                                <div class="environment-popper hidden">
+                                    <div class="environments">
+                                        <p>{{fields.environment.value}}</p>
+                                    </div>
+                                </div>
+                            {{/if}}
                             {{#if allv.length}}
-                                <button type="button" class="btn btn-info btn-xs popper version">
+                                <button type="button" class="btn btn-info btn-xs popper version" data-id="version">
                                     <strong>V</strong>
                                 </button>
                                 <div class="version-popper hidden">
@@ -25,7 +35,7 @@
                                 </div>
                             {{/if}}
                             {{#if allp.length}}
-                                <button type="button" class="btn btn-danger btn-xs popper patch">
+                                <button type="button" class="btn btn-danger btn-xs popper patch" data-id="patch">
                                     <strong>P</strong>
                                 </button>
                                 <div class="patch-popper hidden">

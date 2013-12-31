@@ -261,20 +261,20 @@ var jira = {};
                         radio('jira thread loaded').broadcast(false, id, thread);
                     });
                 });
-                content.on('click', '.details > .info .version', function (e) {
+                content.on('click', '.details > .info .popper', function (e) {
                     e.stopPropagation();
                     $('.details .popper', content).popover('destroy');
                     var self = $(this);
                     self.popover('destroy').popover({
                         content: function () {
-                            return self.siblings('.version-popper').html();
+                            return self.siblings('.' + self.data('id') + '-popper').html();
                         },
                         placement: 'left',
                         trigger: 'manual',
                         html: true
                     }).popover('show');
                 });
-                content.on('click', '.details > .info .patch', function (e) {
+                /*content.on('click', '.details > .info .patch', function (e) {
                     e.stopPropagation();
                     $('.details .popper', content).popover('destroy');
                     var self = $(this);
@@ -286,7 +286,7 @@ var jira = {};
                         trigger: 'manual',
                         html: true
                     }).popover('show');
-                });
+                });*/
                 content.on('click', function (e) {
                     $('.details .popper', content).popover('destroy');
                 });
