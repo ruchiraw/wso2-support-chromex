@@ -4,7 +4,9 @@
         <div class="row">
             <div class="col-xs-12">
                 <h4>[{{key}}] {{fields.summary.value}}</h4>
-                <span class="btn-xs btn-success">{{fields.environment.value}}</span>
+                {{#if fields.environment.value}}
+                    <span class="btn-xs btn-success">{{fields.environment.value}}</span>
+                {{/if}}
             </div>
         </div>
     </div>
