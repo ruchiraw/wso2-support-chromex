@@ -76,6 +76,16 @@ var jira = {};
         });
     };
 
+    var fix = function (issues) {
+        var arr = [];
+        issues.forEach(function (issue) {
+            if (issue) {
+                arr.push(issue);
+            }
+        });
+        return arr;
+    };
+
     var issue = function (id, cb) {
         var data = context.data;
         var o = data[id];
@@ -99,7 +109,7 @@ var jira = {};
                 data[id] = o;
                 cb(false, o);
             } else {
-                cb(true, xhr.statusText);
+                cb(false, null);
             }
         };
         xhr.send(null);
@@ -258,7 +268,7 @@ var jira = {};
                 $('.threads', content).on('click', '.thread a', function (e) {
                     var id = $(this).data('id');
                     issue(id, function (err, thread) {
-                        radio('jira thread loaded').broadcast(false, id, thread);
+                        radio('jira thread loaded').broadcast(err, id, thread);
                     });
                 });
                 content.on('click', '.details > .info .popper', function (e) {
@@ -275,18 +285,18 @@ var jira = {};
                     }).popover('show');
                 });
                 /*content.on('click', '.details > .info .patch', function (e) {
-                    e.stopPropagation();
-                    $('.details .popper', content).popover('destroy');
-                    var self = $(this);
-                    self.popover('destroy').popover({
-                        content: function () {
-                            return self.siblings('.patch-popper').html();
-                        },
-                        placement: 'left',
-                        trigger: 'manual',
-                        html: true
-                    }).popover('show');
-                });*/
+                 e.stopPropagation();
+                 $('.details .popper', content).popover('destroy');
+                 var self = $(this);
+                 self.popover('destroy').popover({
+                 content: function () {
+                 return self.siblings('.patch-popper').html();
+                 },
+                 placement: 'left',
+                 trigger: 'manual',
+                 html: true
+                 }).popover('show');
+                 });*/
                 content.on('click', function (e) {
                     $('.details .popper', content).popover('destroy');
                 });
@@ -356,6 +366,7 @@ var jira = {};
                     });
                     async.parallel(tasks, function (err, issues) {
                         //context[context.type] = issues;
+                        issues = fix(issues);
                         v(issues);
                         p(issues);
                         radio('page loaded').broadcast(false, 'jira');
