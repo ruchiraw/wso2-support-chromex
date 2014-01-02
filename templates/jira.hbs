@@ -9,12 +9,17 @@
                     <div class="col-xs-2 info">
                         <div class="pull-right">
                             {{#if fields.environment.value}}
-                                <button type="button" class="btn btn-success btn-xs popper version" data-id="environment">
+                                <button type="button" class="btn btn-success btn-xs popper version"
+                                        data-id="environment">
                                     <strong>E</strong>
                                 </button>
                                 <div class="environment-popper hidden">
                                     <div class="environments">
-                                        <p>{{fields.environment.value}}</p>
+                                        <table class="table table-striped">
+                                            <tr>
+                                                <td>{{fields.environment.value}}</td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             {{/if}}
