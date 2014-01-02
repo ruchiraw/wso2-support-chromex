@@ -3,9 +3,8 @@
     "name": "WSO2 Support",
     "description": "This extension gives you a few important points about the support issue being viewed",
     "version": "1.0",
-    "browser_action": {
-        "default_icon": "icon.png",
-        "default_popup": "page.html"
+    "background": {
+        "scripts": ["js/background.js"]
     },
     "sandbox": {
         "pages": ["sandbox.html"]
@@ -21,5 +20,12 @@
         "tabs",
         "notifications",
         "<all_urls>"
-    ]
+    ],
+    "page_action": {
+        "default_icon": {
+            "19": "images/icon.gif"
+        },
+        "default_title": "Google Mail",
+        "default_popup": "page.html"
+    }
 }

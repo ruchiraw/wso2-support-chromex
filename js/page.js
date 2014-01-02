@@ -22,7 +22,11 @@ $(function () {
 
     var decodeUrl = function (url) {
         var key = url.substring(ISSUE_PREFIX.length);
-        var index = key.lastIndexOf('-');
+        var index = key.indexOf('?');
+        if (index !== -1) {
+            key = key.substring(0, index);
+        }
+        index = key.lastIndexOf('-');
         return {
             key: key,
             project: key.substring(0, index),
