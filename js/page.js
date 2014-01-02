@@ -119,4 +119,12 @@ $(function () {
     radio('page loaded').subscribe(function (err, id) {
         $('.' + id, pager).removeClass('loading');
     });
+
+    $(document).on('click', '.popover', function (e) {
+        e.stopPropagation();
+    });
+
+    $(document).on('click', function (e) {
+        $('.popper').popover('destroy');
+    });
 });

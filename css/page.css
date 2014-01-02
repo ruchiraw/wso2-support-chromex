@@ -200,5 +200,14 @@ table {
 }
 
 .popover {
-    min-width: 200px!important;
+    min-width: 200px !important;
+}
+
+.popover-content {
+    padding: 6px;
+}
+
+.popover table {
+    border-bottom: 1px solid #DDD;
+    margin-bottom: 0;
 }

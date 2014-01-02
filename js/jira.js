@@ -281,24 +281,9 @@ var jira = {};
                         },
                         placement: 'left',
                         trigger: 'manual',
-                        html: true
+                        html: true,
+                        container: 'body'
                     }).popover('show');
-                });
-                /*content.on('click', '.details > .info .patch', function (e) {
-                 e.stopPropagation();
-                 $('.details .popper', content).popover('destroy');
-                 var self = $(this);
-                 self.popover('destroy').popover({
-                 content: function () {
-                 return self.siblings('.patch-popper').html();
-                 },
-                 placement: 'left',
-                 trigger: 'manual',
-                 html: true
-                 }).popover('show');
-                 });*/
-                content.on('click', function (e) {
-                    $('.details .popper', content).popover('destroy');
                 });
             });
             page.render('jira-controls', {}, function (err, html) {
