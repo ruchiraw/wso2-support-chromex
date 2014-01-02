@@ -18,7 +18,12 @@ var eye = {};
                     if (e.keyCode == 13) {
                         e.preventDefault();
                         var query = $(this).val();
-                        radio('eye search').broadcast(false, query);
+                        var buttons = $('.filters .btn.active', content);
+                        var filters = [];
+                        buttons.each(function() {
+                            filters.push($(this).data('id'));
+                        });
+                        radio('eye search').broadcast(false, query, filters);
                     }
                 });
 

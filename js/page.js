@@ -78,11 +78,11 @@ $(function () {
             }, function (selection) {
                 selection = selection ? selection[0] : null;
                 if (selection) {
-                    radio('eye search').broadcast(false, '"' + selection + '"');
+                    radio('eye search').broadcast(false, '"' + selection + '"', ['gmail', 'stackoverflow']);
                     radio('page change').broadcast(false, 'gmail');
                 } else if (tab.url.indexOf(ISSUE_PREFIX) === 0) {
                     var o = decodeUrl(tab.url);
-                    radio('eye search').broadcast(false, o.key);
+                    radio('eye search').broadcast(false, o.key, ['gmail', 'jira']);
                     radio('page change').broadcast(false, 'gmail');
                 } else {
                     radio('page change').broadcast(false, 'eye');

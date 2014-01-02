@@ -251,7 +251,10 @@ var jira = {};
             }
         });
         //search request from the eye
-        radio('eye search').subscribe(function (err, query) {
+        radio('eye search').subscribe(function (err, query, filters) {
+            if(filters.indexOf('jira') === -1) {
+                return;
+            }
             radio('jira search').broadcast(false, query);
         });
         //search response from the eye

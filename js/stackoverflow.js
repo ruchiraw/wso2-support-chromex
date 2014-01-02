@@ -66,7 +66,10 @@ var stackoverflow = {};
             }
         });
         //search request from the eye
-        radio('eye search').subscribe(function (err, query) {
+        radio('eye search').subscribe(function (err, query, filters) {
+            if (filters.indexOf('stackoverflow') === -1) {
+                return;
+            }
             query = query.trim();
             if (query.charAt(0) === '"' && query.charAt(query.length - 1) === '"') {
                 query = query.substring(1, query.length - 1);

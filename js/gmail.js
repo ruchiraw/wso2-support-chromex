@@ -64,7 +64,10 @@ var gmail = {};
         });
 
         //search request from the eye
-        radio('eye search').subscribe(function (err, query) {
+        radio('eye search').subscribe(function (err, query, filters) {
+            if (filters.indexOf('gmail') === -1) {
+                return;
+            }
             radio('gmail search').broadcast(false, query);
         });
         //search request from gmail
