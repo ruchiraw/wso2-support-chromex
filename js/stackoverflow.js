@@ -87,6 +87,7 @@ var stackoverflow = {};
                     wheelSpeed: 40
                 });
                 $('.back', tools).hide();
+                $('.xpand', controllers).hide();
                 $('.threads', content).on('click', '.thread a', function (e) {
                     var id = $(this).data('id');
                     context.url = $(this).data('url');
@@ -176,6 +177,25 @@ var stackoverflow = {};
                     //TODO
                     radio('stackoverflow results').broadcast(false, context.query, context.data, context.paging);
                 }).show();
+                $('.xpand', controllers).find('.btn').click(function (e) {
+                    var el = $(this);
+                    if (el.hasClass('expand')) {
+                        $('.messages').find('.summary').addClass('hidden').end()
+                            .find('.body').removeClass('hidden').end()
+                            .find('.message').removeClass('ash');
+                        el.removeClass('expand').addClass('collapze');
+                    } else {
+                        $('.messages').find('.body').addClass('hidden').end()
+                            .find('.summary').removeClass('hidden').end()
+                            .find('.message').addClass('ash');
+                        el.removeClass('collapze').addClass('expand');
+                    }
+                    content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
+                        suppressScrollX: true,
+                        minScrollbarLength: 40,
+                        wheelSpeed: 40
+                    });
+                }).end().show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body
                     var self = $(this);

@@ -188,12 +188,24 @@ table {
     height: 30px;
 }
 
+.controls .content .xpand {
+    display: none;
+}
+
 .controls .content .prev {
     background: url('/images/prev.png') no-repeat transparent center;
 }
 
 .controls .content .next {
     background: url('/images/next.png') no-repeat transparent center;
+}
+
+.controls .content .collapze {
+    background: url('/images/minus.png') no-repeat transparent center;
+}
+
+.controls .content .expand {
+    background: url('/images/plus.png') no-repeat transparent center;
 }
 
 .controls .content .popup {
