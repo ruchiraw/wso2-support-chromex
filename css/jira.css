@@ -6,6 +6,10 @@
     background: url('/images/recent.png') no-repeat transparent center;
 }
 
+.controls .jira .search {
+    background: url('/images/search.png') no-repeat transparent center;
+}
+
 .controls .jira .btn.active {
     background-color: #D8D8D8;
 }

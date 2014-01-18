@@ -21,18 +21,9 @@ var jira = {};
         return URL + path;
     };
 
-    var decode = function (key) {
-        key = key.trim();
-        var index = key.lastIndexOf('-');
-        return {
-            key: key,
-            project: key.substring(0, index),
-            id: key.substring(index + 1)
-        };
-    };
+    /*var dictionary = {};*/
 
     var v = function (issues) {
-        console.log(issues);
         var regex = /(?:[a-zA-Z]+[\s-]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\s/ig;
         issues.forEach(function (issue) {
             var description = issue.fields.description;
@@ -49,6 +40,19 @@ var jira = {};
                     comment.v = a;
                     all = all.concat(a);
                 }
+                /*var words = comment.body.split(/\W/ig);
+                 var dic = dictionary;
+                 words.forEach(function(word) {
+                 var i, ch, arr,
+                 o = dic,
+                 l = word.length;
+                 for(i = 0; i < l; i++) {
+                 ch = word.charAt(i).toLowerCase();
+                 o = o[ch] || (o[ch] = {});
+                 }
+                 arr = o[''] || (o[''] = []);
+                 arr.push(issue.key);
+                 });*/
             });
             issue.allv = all;
         });
@@ -116,9 +120,9 @@ var jira = {};
     };
 
     var recent = function (o, paging, cb) {
-        var order = (o.sort === 'asc' ? 'ASC' : 'DESC');
+        var order = (paging.sort === 'asc' ? 'ASC' : 'DESC');
         searchJira({
-            query: 'project = ' + o.query.project + ' ORDER BY key ' + order + ', status ' + order + ', priority ' + order
+            query: 'project = ' + o.project + ' ORDER BY key ' + order + ', status ' + order + ', priority ' + order
         }, paging, cb);
     };
 
@@ -127,11 +131,11 @@ var jira = {};
             results = {
                 issues: []
             };
-        start = o.query.id > paging.start ? o.query.id - paging.start : 0;
+        start = o.id > paging.start ? o.id - paging.start : 0;
         length = start - RESULT_COUNT > 0 ? start - RESULT_COUNT : 0;
         for (i = start; i > length; i--) {
             results.issues.push({
-                key: o.query.project + '-' + i
+                key: o.project + '-' + i
             });
         }
         cb(false, results);
@@ -227,7 +231,8 @@ var jira = {};
         xhr.send(JSON.stringify(data));
     };
 
-    jira.init = function (content, tools, controllers) {
+    jira.init = function (content, tools, controllers, is) {
+        context.issue = is;
         //page change event
         radio('page change').subscribe(function (err, id) {
             if (id !== 'jira') {
@@ -237,22 +242,28 @@ var jira = {};
             if (!initialized) {
                 initialized = true;
                 page.render('jira-tools', {
-                    query: context.query.key
+                    query: context.query
                 }, function (err, html) {
                     tools.html(html);
-                    $('.search', tools).keydown(function (e) {
+                    var search = $('.search', tools);
+                    search.keydown(function (e) {
                         if (e.keyCode == 13) {
                             e.preventDefault();
                             context.query = $(this).val();
                             radio('jira search').broadcast(false, context.query);
                         }
                     });
+                    if(context.type === 'search') {
+                        search.show();
+                    } else {
+                        search.hide();
+                    }
                 });
             }
         });
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
-            if(filters.indexOf('jira') === -1) {
+            if (filters.indexOf('jira') === -1) {
                 return;
             }
             radio('jira search').broadcast(false, query);
@@ -297,7 +308,21 @@ var jira = {};
                 } else {
                     $('.next', controllers).click(function (e) {
                         var start = parseInt($(this).parent().data('start'), 10) + RESULT_COUNT;
-                        radio('jira search').broadcast(false, context.query.key, {
+                        if (context.type === 'search') {
+                            radio('jira search').broadcast(false, context.query, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        if (context.type === 'recent') {
+                            radio('jira recent').broadcast(false, context.issue, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        radio('jira history').broadcast(false, context.issue, {
                             start: start,
                             count: RESULT_COUNT
                         });
@@ -308,7 +333,21 @@ var jira = {};
                 } else {
                     $('.prev', controllers).click(function (e) {
                         var start = parseInt($(this).parent().data('start'), 10) - RESULT_COUNT;
-                        radio('jira search').broadcast(false, context.query.key, {
+                        if (context.type === 'search') {
+                            radio('jira search').broadcast(false, context.query, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        if (context.type === 'recent') {
+                            radio('jira recent').broadcast(false, context.issue, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        radio('jira history').broadcast(false, context.issue, {
                             start: start,
                             count: RESULT_COUNT
                         });
@@ -318,51 +357,93 @@ var jira = {};
                     context.type = 'history';
                     $('.tabs .btn', controllers).removeClass('active');
                     $(this).addClass('active');
-                    radio('jira search').broadcast(false, context.query.key);
+                    $('.search', tools).hide();
+                    radio('jira history').broadcast(false, context.issue);
                 });
                 $('.recent', controllers).click(function (e) {
                     context.type = 'recent';
                     $('.tabs .btn', controllers).removeClass('active');
                     $(this).addClass('active');
-                    radio('jira search').broadcast(false, context.query.key);
+                    $('.search', tools).hide();
+                    radio('jira recent').broadcast(false, context.issue);
+                });
+                $('.search', controllers).click(function (e) {
+                    context.type = 'search';
+                    $('.tabs .btn', controllers).removeClass('active');
+                    $(this).addClass('active');
+                    $('.search', tools).show();
+                    radio('jira search').broadcast(false, context.query);
                 });
                 $('.' + context.type, controllers).addClass('active');
             });
         });
+
+        var process = function (err, results) {
+            var tasks = [];
+            results.issues.forEach(function (obj) {
+                tasks.push(function (cb) {
+                    //TODO ????
+                    issue(obj.key, cb);
+                });
+            });
+            async.parallel(tasks, function (err, issues) {
+                //context[context.type] = issues;
+                issues = fix(issues);
+                v(issues);
+                p(issues);
+                radio('page loaded').broadcast(false, 'jira');
+                radio('jira results').broadcast(err, context.query, issues, context.paging);
+            });
+        };
+
         //search request from jira
         radio('jira search').subscribe(function (err, query, paging) {
-            if (query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
-                //issue id has been searched
-                var o = decode(query.trim());
-                context.query = o;
-                paging = paging || {
-                    start: 0,
-                    count: RESULT_COUNT
-                };
-                context.paging = paging;
-                radio('page load').broadcast(false, 'jira');
-
-                (context.type === 'history' ? history : recent)({
-                    query: o
-                }, paging, function (err, results) {
-                    var tasks = [];
-                    results.issues.forEach(function (obj) {
-                        tasks.push(function (cb) {
-                            //TODO ????
-                            issue(obj.key, cb);
-                        });
-                    });
-                    async.parallel(tasks, function (err, issues) {
-                        //context[context.type] = issues;
-                        issues = fix(issues);
-                        v(issues);
-                        p(issues);
-                        radio('page loaded').broadcast(false, 'jira');
-                        radio('jira results').broadcast(err, query, issues, paging);
-                    });
-                });
+            context.type = 'search';
+            $('.tabs .btn', controllers).removeClass('active');
+            $('.' + context.type, controllers).addClass('active');
+            if (!query) {
+                content.empty();
                 return;
             }
+            paging = paging || {
+                start: 0,
+                count: RESULT_COUNT
+            };
+            context.paging = paging;
+            radio('page load').broadcast(false, 'jira');
+            //jira search
+            context.query = (query = query.match(/^".*"$/ig) ? query : '"' + query + '"');
+            searchJira({
+                query: 'summary ~ ' + query + ' OR description ~ ' + query + ' OR comment ~ ' + query
+            }, paging, process);
+        });
+
+        radio('jira history').subscribe(function (err, issue, paging) {
+            context.type = 'history';
+            $('.tabs .btn', controllers).removeClass('active');
+            $('.' + context.type, controllers).addClass('active');
+            paging = paging || {
+                start: 0,
+                count: RESULT_COUNT
+            };
+            context.paging = paging;
+            context.issue = issue;
+            radio('page load').broadcast(false, 'jira');
+            history(issue, paging, process);
+        });
+
+        radio('jira recent').subscribe(function (err, issue, paging) {
+            context.type = 'recent';
+            $('.tabs .btn', controllers).removeClass('active');
+            $('.' + context.type, controllers).addClass('active');
+            paging = paging || {
+                start: 0,
+                count: RESULT_COUNT
+            };
+            context.paging = paging;
+            context.issue = issue;
+            radio('page load').broadcast(false, 'jira');
+            recent(issue, paging, process);
         });
 
         radio('jira thread loaded').subscribe(function (err, id, thread) {

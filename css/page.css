@@ -89,6 +89,10 @@ table {
     background: url('/images/ajax-loader.gif') no-repeat transparent center;
 }
 
+.toolbar .pager .active.loading {
+    background: url('/images/ajax-loader-active.gif') no-repeat #D8D8D8 center;
+}
+
 /**
  * toolbar styles
  */

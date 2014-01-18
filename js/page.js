@@ -69,10 +69,6 @@ $(function () {
     });
 
     $('#sandbox').load(function () {
-        pages.forEach(function (id) {
-            window[id].init($('.' + id, contents), $('.' + id, tools), $('.' + id, controllers));
-        });
-
         chrome.tabs.query({
             active: true
         }, function (tabs) {
@@ -80,13 +76,19 @@ $(function () {
             chrome.tabs.executeScript({
                 code: 'window.getSelection().toString();'
             }, function (selection) {
+                var issue = tab.url.indexOf(ISSUE_PREFIX) === 0 ? decodeUrl(tab.url) : null;
+                pages.forEach(function (id) {
+                    window[id].init($('.' + id, contents), $('.' + id, tools), $('.' + id, controllers), {
+                        issue: issue
+                    });
+                });
                 selection = selection ? selection[0] : null;
                 if (selection) {
-                    radio('eye search').broadcast(false, '"' + selection + '"', ['gmail', 'stackoverflow']);
+                    radio('eye search').broadcast(false, '"' + selection + '"', ['gmail', 'jira', 'stackoverflow']);
                     radio('page change').broadcast(false, 'gmail');
-                } else if (tab.url.indexOf(ISSUE_PREFIX) === 0) {
-                    var o = decodeUrl(tab.url);
-                    radio('eye search').broadcast(false, o.key, ['gmail', 'jira']);
+                } else if (issue) {
+                    radio('gmail search').broadcast(false, issue.key);
+                    radio('jira history').broadcast(false, issue);
                     radio('page change').broadcast(false, 'gmail');
                 } else {
                     radio('page change').broadcast(false, 'eye');
