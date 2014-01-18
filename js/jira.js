@@ -120,10 +120,29 @@ var jira = {};
     };
 
     var recent = function (o, paging, cb) {
+        if (context.recent) {
+            var i, length, start,
+                results = {
+                    issues: []
+                };
+            start = context.recent - paging.start;
+            length = start - RESULT_COUNT > 0 ? start - RESULT_COUNT : 0;
+            for (i = start; i > length; i--) {
+                results.issues.push({
+                    key: o.project + '-' + i
+                });
+            }
+            cb(false, results);
+            return;
+        }
         var order = (paging.sort === 'asc' ? 'ASC' : 'DESC');
         searchJira({
             query: 'project = ' + o.project + ' ORDER BY key ' + order + ', status ' + order + ', priority ' + order
-        }, paging, cb);
+        }, paging, function (err, results) {
+            var key = results.issues[0].key;
+            context.recent = parseInt(key.substring(key.lastIndexOf('-') + 1), 10);
+            cb(err, results);
+        });
     };
 
     var history = function (o, paging, cb) {
@@ -253,7 +272,7 @@ var jira = {};
                             radio('jira search').broadcast(false, context.query);
                         }
                     });
-                    if(context.type === 'search') {
+                    if (context.type === 'search') {
                         search.show();
                     } else {
                         search.hide();
