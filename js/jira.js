@@ -479,7 +479,7 @@ var jira = {};
                     //TODO
                     radio('jira results').broadcast(false, context.query, context.issues, context.paging);
                 }).show();
-                $('.xpand', controllers).find('.btn').click(function (e) {
+                $('.xpand', controllers).find('.btn').unbind().click(function (e) {
                     var el = $(this);
                     if (el.hasClass('expand')) {
                         $('.messages').find('.summary').addClass('hidden').end()

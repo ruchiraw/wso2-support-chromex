@@ -4,6 +4,9 @@
         <div class="row">
             <div class="col-xs-12">
                 <h4>{{subject}}</h4>
+                {{#labels}}
+                    <span class="btn-xs btn-success clabel">{{.}}</span>
+                {{/labels}}
             </div>
         </div>
     </div>

@@ -150,15 +150,16 @@ var gmail = {};
 
         radio('gmail thread loaded').subscribe(function (err, id, subject, thread) {
             radio('page loaded').broadcast(false, 'gmail');
-            if (!thread.length) {
+            if (!thread.messages.length) {
                 //TODO: no result message
                 return;
             }
-            context.id = thread[0].id;
+            context.id = thread.messages[0].id;
             thread = {
                 query: context.query.substring(1, context.query.length - 1),
                 subject: subject,
-                thread: thread
+                labels: thread.labels,
+                thread: thread.messages
             };
             console.log(thread.query);
             page.render('thread', thread, function (err, html) {
@@ -171,7 +172,7 @@ var gmail = {};
                 $('.back', tools).unbind().click(function (e) {
                     radio('gmail searched').broadcast(false, context.query, context.threads, context.paging);
                 }).show();
-                $('.xpand', controllers).find('.btn').click(function (e) {
+                $('.xpand', controllers).find('.btn').unbind().click(function (e) {
                     var el = $(this);
                     if (el.hasClass('expand')) {
                         $('.messages').find('.summary').addClass('hidden').end()

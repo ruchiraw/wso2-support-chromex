@@ -3,7 +3,11 @@
         <div class="row thread">
             <div class="col-xs-12">
                 <div class="row details">
-                    <div class="col-xs-9 subject"><a href="#" data-id="{{id}}">{{subject}} ({{count}})</a></div>
+                    <div class="col-xs-9 subject">
+                        {{#labels}}
+                            <span class="btn-xs btn-success clabel">{{.}}</span>
+                        {{/labels}}
+                        <a href="#" data-id="{{id}}">{{subject}} ({{count}})</a></div>
                     <div class="col-xs-3 time">
                         <div class="pull-right">{{ago updated}}</div>
                     </div>
