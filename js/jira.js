@@ -63,7 +63,7 @@ var jira = {};
     };
 
     var p = function (issues) {
-        var regex = /((patch)[-\s]?[0-9]{2,4})|(WSO2-CARBON-PATCH-)[0-9]\.[0-9]\.[0-9]-[0-9]{4}/ig;
+        var regex = /((patch)[-\s]?[0-9]{2,4})|(WSO2-CARBON-PATCH-)[0-9]\.[0-9]\.[0-9]-[0-9]{2,6}/ig;
         issues.forEach(function (issue) {
             var description = issue.fields.description;
             var a = description.value.match(regex);
