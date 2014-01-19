@@ -34,7 +34,6 @@ var hiliter = {};
     };
 
     hiliter.search = function (key, content, css) {
-        console.log(content);
         if (!(key instanceof Array)) {
             return hilit(key, content, css);
         }
