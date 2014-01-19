@@ -25,8 +25,22 @@ var hiliter = {};
      return content.replace(new RegExp(pattern, 'gi'), '<span class="hiliter">$&</span>');
      }; */
 
+    var hilit = function (key, content, css) {
+        if (!(key instanceof RegExp)) {
+            (key = (key.replace(/^'(.*)'$|^"(.*)"$/ig, '$1$2').replace(/(<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>)+/ig, '').replace(/\(/ig, '\\(').replace(/\)/ig, '\\)').replace(/\./ig, '\\.') + ' ').split(/\W+/)).pop();
+            key = new RegExp('\\b((' + key.join(')|(') + '))\\b', 'gi');
+        }
+        return content.replace(key, '<span class="hiliter' + (css ? (' ' + css) : '') + '">$&</span>');
+    };
+
     hiliter.search = function (key, content, css) {
-        (key = (key.replace(/^'(.*)'$|^"(.*)"$/ig,'$1$2').replace(/(<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>)+/ig, '').replace(/\(/ig, '\\(').replace(/\)/ig, '\\)').replace(/\./ig, '\\.') + ' ').split(/\W+/)).pop();
-        return content.replace(new RegExp('\\b((' + key.join(')|(') + '))\\b', 'gi'), '<span class="hiliter' + (css ? (' ' + css) : '') + '">$&</span>');
+        console.log(content);
+        if (!(key instanceof Array)) {
+            return hilit(key, content, css);
+        }
+        key.forEach(function (o) {
+            content = hilit(o.regex, content, o.css);
+        });
+        return content;
     };
 }());

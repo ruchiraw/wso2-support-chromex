@@ -13,3 +13,11 @@
 .controls .jira .btn.active {
     background-color: #D8D8D8;
 }
+
+.hiliter.version {
+    background-color: #5BC0DE;
+}
+
+.hiliter.patch {
+    background-color: #D9534F;
+}

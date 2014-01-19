@@ -55,6 +55,10 @@ var jira = {};
                  });*/
             });
             issue.allv = all;
+            (issue.hilits || (issue.hilits = [])).push({
+                css: 'version',
+                regex: regex
+            });
         });
     };
 
@@ -77,6 +81,10 @@ var jira = {};
                 }
             });
             issue.allp = all;
+            (issue.hilits || (issue.hilits = [])).push({
+                css: 'patch',
+                regex: regex
+            });
         });
     };
 
