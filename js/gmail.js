@@ -156,7 +156,7 @@ var gmail = {};
             }
             context.id = thread.messages[0].id;
             thread = {
-                query: context.query.substring(1, context.query.length - 1),
+                query: context.query,
                 subject: subject,
                 labels: thread.labels,
                 thread: thread.messages

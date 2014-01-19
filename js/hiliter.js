@@ -25,8 +25,8 @@ var hiliter = {};
      return content.replace(new RegExp(pattern, 'gi'), '<span class="hiliter">$&</span>');
      }; */
 
-    hiliter.search = function (key, content) {
-        (key = (key.replace(/(<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>)+/ig, '').replace(/\(/ig, '\\(').replace(/\)/ig, '\\)').replace(/\./ig, '\\.') + ' ').split(/\W+/)).pop();
-        return content.replace(new RegExp('\\b((' + key.join(')|(') + '))\\b', 'gi'), '<span class="hiliter">$&</span>');
+    hiliter.search = function (key, content, css) {
+        (key = (key.replace(/^'(.*)'$|^"(.*)"$/ig,'$1$2').replace(/(<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>)+/ig, '').replace(/\(/ig, '\\(').replace(/\)/ig, '\\)').replace(/\./ig, '\\.') + ' ').split(/\W+/)).pop();
+        return content.replace(new RegExp('\\b((' + key.join(')|(') + '))\\b', 'gi'), '<span class="hiliter' + (css ? (' ' + css) : '') + '">$&</span>');
     };
 }());

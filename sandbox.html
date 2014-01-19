@@ -62,7 +62,7 @@
     });
 
     Handlebars.registerHelper('hilit', function (context, block) {
-        return new Handlebars.SafeString(hiliter.search(context.hash.query, context.fn(this)));
+        return new Handlebars.SafeString(hiliter.search(context.hash.query, context.fn(this), context.hash.css));
     });
 
     Handlebars.registerHelper('uname', function (str) {
