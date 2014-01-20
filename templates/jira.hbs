@@ -56,6 +56,16 @@
                                     </div>
                                 </div>
                             {{/if}}
+                            <button class="btn btn-default btn-xs popper status {{css fields.status.value.name}}" data-id="status"></button>
+                            <div class="status-popper hidden">
+                                <div class="status-info">
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <td>{{fields.status.value.name}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
                             <!--<button type="button" class="btn btn-danger btn-xs popper patch"><strong>P</strong></button>-->
                         </div>
                     </div>

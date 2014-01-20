@@ -542,4 +542,7 @@ var jira = {};
 
 }());
 
+//issue.fields.project.value.self --> o.lead.displayName, name
+//issue.fields.status.value.name
+
 //"a wso2 esb 4.5.1 and esb wso2 application server 5.1 esb several bps version we have is 2.0.1 and also there is another cluster of ESB 4.8.0 servers".match(/(?:[a-zA-Z]+[\s]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\b/ig)

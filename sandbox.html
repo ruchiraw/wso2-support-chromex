@@ -69,6 +69,10 @@
         return '<strong>' + str.substring(0, str.indexOf(' <')) + '</strong>';
     });
 
+    Handlebars.registerHelper('css', function (str) {
+        return str.replace(/\s/ig, '').toLowerCase();
+    });
+
     Handlebars.registerHelper('ago', function (time) {
         return moment(time).fromNow();
     });

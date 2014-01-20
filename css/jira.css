@@ -14,10 +14,48 @@
     background-color: #D8D8D8;
 }
 
-.hiliter.version {
+.jira .hiliter.version {
     background-color: #5BC0DE;
 }
 
-.hiliter.patch {
+.jira .hiliter.patch {
     background-color: #D9534F;
+}
+
+.jira .status {
+    height: 22px;
+    width: 20px;
+    background: url('/images/status_generic.gif') no-repeat transparent center;
+}
+
+.jira .status.open {
+    background: url('/images/status_open.gif') no-repeat transparent center;
+}
+
+.jira .status.inprogress {
+    background: url('/images/status_inprogress.gif') no-repeat transparent center;
+}
+
+.jira .status.waitingonclient {
+    background: url('/images/status_needinfo.gif') no-repeat transparent center;
+}
+
+.jira .status.waitingonwso2 {
+    background: url('/images/status_visible.gif') no-repeat transparent center;
+}
+
+.jira .status.resolved {
+    background: url('/images/status_resolved.gif') no-repeat transparent center;
+}
+
+.jira .status.closed {
+    background: url('/images/status_closed.gif') no-repeat transparent center;
+}
+
+.jira .status.reopened {
+    background: url('/images/status_reopened.gif') no-repeat transparent center;
+}
+
+.jira .status.deffered {
+    background: url('/images/status_generic.gif') no-repeat transparent center;
 }
