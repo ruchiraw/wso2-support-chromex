@@ -10,6 +10,8 @@ var jira = {};
 
     var ISSUE_EPR = URL + '/jira/rest/api/2.0.alpha1/issue/';
 
+    var PROJECT_EPR = URL + '/jira/rest/api/2.0.alpha1/project/';
+
     var initialized = false;
 
     var context = {
@@ -119,6 +121,28 @@ var jira = {};
                     c.html = comments[i++];
                 });
                 data[id] = o;
+                cb(false, o);
+            } else {
+                cb(false, null);
+            }
+        };
+        xhr.send(null);
+    };
+
+    var project = function (id, cb) {
+        var o = context.project;
+        if (o) {
+            cb(false, o);
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', PROJECT_EPR + id, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function (e) {
+            if (xhr.status === 200) {
+                o = JSON.parse(xhr.responseText);
+                context.project = o;
                 cb(false, o);
             } else {
                 cb(false, null);
@@ -536,6 +560,14 @@ var jira = {};
                         active: false
                     });
                 }).removeClass('hidden');
+            });
+        });
+
+        radio('jira project info').subscribe(function (err, id) {
+            project(id, function (err, result) {
+                setTimeout(function () {
+                    radio('jira project info loaded').broadcast(err, id, result);
+                }, 0);
             });
         });
     };
