@@ -248,3 +248,12 @@ table {
 .messages .subject .btn-success {
     padding-top: 2px;
 }
+
+.messages .subject .btn-default {
+    padding-top: 2px;
+    border: 1px solid #ccc;
+}
+
+.messages .subject .btn-default:hover {
+    background: none;
+}

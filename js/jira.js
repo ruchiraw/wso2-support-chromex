@@ -24,7 +24,7 @@ var jira = {};
     /*var dictionary = {};*/
 
     var v = function (issues) {
-        var regex = /(?:[a-zA-Z]+[\s-]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\s/ig;
+        var regex = /(?:[a-zA-Z]+[\s-]+){1,3}[0-9]\.[0-9](\.[0-9]+)?/ig;
         issues.forEach(function (issue) {
             var description = issue.fields.description;
             var a = description.value.match(regex);
