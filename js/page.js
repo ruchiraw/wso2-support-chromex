@@ -6,7 +6,7 @@ $(function () {
     var tools = $('.tools');
     var controllers = $('.controllers');
 
-    var pages = ['eye', 'gmail', 'jira', 'stackoverflow'];
+    var pages = ['eye', 'gmail', 'jira', 'stackoverflow', 'google'];
 
     var contexts = {};
 
@@ -84,7 +84,7 @@ $(function () {
                 });
                 selection = selection ? selection[0] : null;
                 if (selection) {
-                    radio('eye search').broadcast(false, '"' + selection + '"', ['gmail', 'jira', 'stackoverflow']);
+                    radio('eye search').broadcast(false, '"' + selection + '"', ['gmail', 'jira', 'stackoverflow', 'google']);
                     radio('page change').broadcast(false, 'gmail');
                 } else if (issue) {
                     radio('gmail search').broadcast(false, issue.key);

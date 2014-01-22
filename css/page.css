@@ -121,6 +121,10 @@ table {
     background: url('/images/eye.png') no-repeat transparent center;
 }
 
+.pager .google {
+    background: url('/images/google.png') no-repeat transparent center;
+}
+
 .pager .active {
     background-color: #D8D8D8;
 }
