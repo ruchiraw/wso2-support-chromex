@@ -27,8 +27,14 @@ var hiliter = {};
 
     var hilit = function (key, content, css) {
         if (!(key instanceof RegExp)) {
-            (key = (key.replace(/^'(.*)'$|^"(.*)"$/ig, '$1$2').replace(/(<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>)+/ig, '').replace(/\(/ig, '\\(').replace(/\)/ig, '\\)').replace(/\./ig, '\\.') + ' ').split(/\W+/)).pop();
-            key = new RegExp('\\b((' + key.join(')|(') + '))\\b', 'gi');
+            (key = (key.replace(/^'(.*)'$|^"(.*)"$/ig, '$1$2').replace(/(<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>)+/ig, '').replace(/[-\/\\^$*+?.()|[\]{}]/ig, '\\$&') + ' ').split(/\W+/));
+            var o = [];
+            key.forEach(function (k) {
+                if (k) {
+                    o.push(k);
+                }
+            });
+            key = new RegExp('\\b((' + o.join(')|(') + '))\\b', 'gi');
         }
         return content.replace(key, '<span class="hiliter' + (css ? (' ' + css) : '') + '">$&</span>');
     };

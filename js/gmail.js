@@ -11,7 +11,6 @@ var gmail = {};
     var initialized = false;
 
     var search = function (query, paging) {
-        paging = paging || { start: 0, count: RESULT_COUNT };
         //search gmail for the query
         var xhr = new XMLHttpRequest();
         xhr.onload = function (e) {
@@ -72,6 +71,7 @@ var gmail = {};
         });
         //search request from gmail
         radio('gmail search').subscribe(function (err, query, paging) {
+            paging = paging || { start: 0, count: RESULT_COUNT };
             context.id = null;
             context.query = query;
             context.paging = paging;
@@ -91,14 +91,27 @@ var gmail = {};
                 }).scrollTop(0);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
-                $('.threads', content).on('click', '.thread a', function (e) {
+                $('.threads', content).on('click', '.thread .subject-link',function (e) {
                     var id = $(this).data('id');
                     var subject = $(this).text();
                     //remove message count
                     subject = subject.substring(0, subject.lastIndexOf(' '));
                     thread(id, subject);
                     radio('page load').broadcast(false, 'gmail');
-                });
+                }).on('mouseenter', '.clabel',function (e) {
+                        e.preventDefault();
+                        $('.lclose', this).show();
+                    }).on('mouseleave', '.clabel',function (e) {
+                        e.preventDefault();
+                        $('.lclose', this).hide();
+                    }).on('click', '.lclose', function (e) {
+                        e.preventDefault();
+                        console.log(context.query);
+                        var query = '-label:' + $(this).data('label') + ' ' + context.query;
+                        console.log(query);
+                        $('.search', tools).val(query);
+                        radio('gmail search').broadcast(false, query);
+                    });
             });
             page.render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);

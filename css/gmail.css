@@ -19,3 +19,23 @@
     font-weight: bold;
     letter-spacing: 1px;
 }
+
+.gmail .clabel {
+    position: relative;
+}
+
+.gmail .clabel .lclose {
+    width: 12px;
+    height: 12px;
+    top: 1px;
+    right: 1px;
+    color: #000;
+    display: none;
+    cursor: pointer;
+    text-align: center;
+    background-color: #888;
+    padding: 0;
+    line-height: 12px;
+    position: absolute;
+    border-radius: 0 3px 3px 0;
+}

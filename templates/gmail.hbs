@@ -5,9 +5,9 @@
                 <div class="row details">
                     <div class="col-xs-9 subject">
                         {{#labels}}
-                            <span class="btn-xs btn-success clabel">{{.}}</span>
+                            <span class="btn-xs btn-success clabel">{{.}}<a class="lclose btn-xs btn-danger" data-label="{{.}}">x</a></span>
                         {{/labels}}
-                        <a href="#" data-id="{{id}}">{{subject}} ({{count}})</a></div>
+                        <a class="subject-link" href="#" data-id="{{id}}">{{subject}} ({{count}})</a></div>
                     <div class="col-xs-3 time">
                         <div class="pull-right">{{ago updated}}</div>
                     </div>
