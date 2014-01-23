@@ -2,14 +2,14 @@ var eye = {};
 
 (function () {
 
-    eye.init = function (content, tools, controllers, is) {
+    eye.init = function (content, tools, controllers, o) {
         //page change event
         radio('page change').subscribe(function (err, id) {
             if (id !== 'eye') {
                 return;
             }
 
-            radio('jira project info').broadcast(false, is.issue.project);
+            radio('jira project info').broadcast(false, o.issue.project);
 
             page.render('eye', {}, function (err, html) {
                 content.html(html);

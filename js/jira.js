@@ -19,6 +19,8 @@ var jira = {};
         data: {}
     };
 
+    var inProject = false;
+
     var url = function (path) {
         return URL + path;
     };
@@ -282,8 +284,8 @@ var jira = {};
         xhr.send(JSON.stringify(data));
     };
 
-    jira.init = function (content, tools, controllers, is) {
-        context.issue = is;
+    jira.init = function (content, tools, controllers, o) {
+        context.issue = o.issue;
         //page change event
         radio('page change').subscribe(function (err, id) {
             if (id !== 'jira') {
@@ -304,10 +306,23 @@ var jira = {};
                             radio('jira search').broadcast(false, context.query);
                         }
                     });
+                    var project = $('.in-project', tools);
+                    project.click(function (e) {
+                        var el = $(this);
+                        if (el.hasClass('active')) {
+                            inProject = false;
+                            el.removeClass('active');
+                            return;
+                        }
+                        inProject = true;
+                        el.addClass('active');
+                    });
                     if (context.type === 'search') {
                         search.show();
+                        project.show();
                     } else {
                         search.hide();
+                        project.hide();
                     }
                 });
             }
@@ -410,6 +425,8 @@ var jira = {};
                     $('.tabs .btn', controllers).removeClass('active');
                     $(this).addClass('active');
                     $('.search', tools).hide();
+                    $('.in-project', tools).hide();
+                    $('.back', tools).hide();
                     radio('jira history').broadcast(false, context.issue);
                 });
                 $('.recent', controllers).click(function (e) {
@@ -417,6 +434,8 @@ var jira = {};
                     $('.tabs .btn', controllers).removeClass('active');
                     $(this).addClass('active');
                     $('.search', tools).hide();
+                    $('.in-project', tools).hide();
+                    $('.back', tools).hide();
                     radio('jira recent').broadcast(false, context.issue);
                 });
                 $('.search', controllers).click(function (e) {
@@ -424,6 +443,8 @@ var jira = {};
                     $('.tabs .btn', controllers).removeClass('active');
                     $(this).addClass('active');
                     $('.search', tools).show();
+                    $('.in-project', tools).show();
+                    $('.back', tools).hide();
                     radio('jira search').broadcast(false, context.query);
                 });
                 $('.' + context.type, controllers).addClass('active');
@@ -465,8 +486,12 @@ var jira = {};
             radio('page load').broadcast(false, 'jira');
             //jira search
             context.query = (query = query.match(/^".*"$/ig) ? query : '"' + query + '"');
+            query = 'summary ~ ' + query + ' OR description ~ ' + query + ' OR comment ~ ' + query;
+            if (inProject) {
+                query = 'project = ' + context.issue.project + ' AND (' + query + ')';
+            }
             searchJira({
-                query: 'summary ~ ' + query + ' OR description ~ ' + query + ' OR comment ~ ' + query
+                query: query
             }, paging, process);
         });
 
@@ -479,7 +504,6 @@ var jira = {};
                 count: RESULT_COUNT
             };
             context.paging = paging;
-            context.issue = issue;
             radio('page load').broadcast(false, 'jira');
             history(issue, paging, process);
         });
@@ -493,7 +517,6 @@ var jira = {};
                 count: RESULT_COUNT
             };
             context.paging = paging;
-            context.issue = issue;
             radio('page load').broadcast(false, 'jira');
             recent(issue, paging, process);
         });
