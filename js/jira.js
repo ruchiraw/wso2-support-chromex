@@ -92,6 +92,18 @@ var jira = {};
         });
     };
 
+    var matched = function (thread) {
+        var regex = hiliter.regex(context.query);
+        var description = thread.fields.description;
+        description.matched = description.value.match(regex);
+        thread.fields.comment.value.forEach(function (c) {
+            c.matched = c.body.match(regex);
+        });
+        (thread.hilits || (thread.hilits = [])).push({
+            regex: regex
+        });
+    };
+
     var fix = function (issues) {
         var arr = [];
         issues.forEach(function (issue) {
@@ -524,6 +536,9 @@ var jira = {};
 
         radio('jira thread loaded').subscribe(function (err, id, thread) {
             //radio('page loaded').broadcast(false, 'jira');
+            if (context.type === 'search') {
+                matched(thread);
+            }
             page.render('thread-jira', thread, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({

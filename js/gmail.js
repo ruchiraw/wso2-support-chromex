@@ -24,6 +24,16 @@ var gmail = {};
         xhr.send(null);
     };
 
+    var matched = function (threads) {
+        var regex = hiliter.regex(context.query);
+        threads.thread.forEach(function (thread) {
+            thread.matched = thread.body.match(regex);
+        });
+        (thread.hilits || (thread.hilits = [])).push({
+            regex: regex
+        });
+    };
+
     var thread = function (id, subject) {
         //get thread content from the id
         var xhr = new XMLHttpRequest();
@@ -172,7 +182,7 @@ var gmail = {};
                 labels: thread.labels,
                 thread: thread.messages
             };
-            console.log(thread.query);
+            matched(thread);
             page.render('thread', thread, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
