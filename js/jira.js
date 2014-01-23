@@ -474,6 +474,7 @@ var jira = {};
             context.type = 'search';
             $('.tabs .btn', controllers).removeClass('active');
             $('.' + context.type, controllers).addClass('active');
+            $('.search', tools).val(query);
             if (!query) {
                 content.empty();
                 return;

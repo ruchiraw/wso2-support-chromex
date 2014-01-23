@@ -136,6 +136,7 @@ var stackoverflow = {};
                 //issue id has been searched
                 context.query = query;
                 context.paging = paging;
+                $('.search', tools).val(query);
                 radio('page load').broadcast(false, 'stackoverflow');
                 search(query, function (err, threads, paging) {
                     console.log(threads);

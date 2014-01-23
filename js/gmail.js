@@ -75,6 +75,7 @@ var gmail = {};
             context.id = null;
             context.query = query;
             context.paging = paging;
+            $('.search', tools).val(query);
             radio('page load').broadcast(false, 'gmail');
             search(query, paging);
         });
@@ -106,10 +107,7 @@ var gmail = {};
                         $('.lclose', this).hide();
                     }).on('click', '.lclose', function (e) {
                         e.preventDefault();
-                        console.log(context.query);
                         var query = '-label:' + $(this).data('label') + ' ' + context.query;
-                        console.log(query);
-                        $('.search', tools).val(query);
                         radio('gmail search').broadcast(false, query);
                     });
             });
