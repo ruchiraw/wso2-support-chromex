@@ -15,7 +15,6 @@ var jira = {};
     var initialized = false;
 
     var context = {
-        type: 'history',
         data: {}
     };
 
@@ -329,13 +328,71 @@ var jira = {};
                         inProject = true;
                         el.addClass('active');
                     });
-                    if (context.type === 'search') {
-                        search.show();
-                        project.show();
-                    } else {
-                        search.hide();
-                        project.hide();
-                    }
+                    /*if (context.type === 'search') {
+                     search.show();
+                     project.show();
+                     } else {
+                     search.hide();
+                     project.hide();
+                     }*/
+                    //radio('jira search').broadcast(false, context.query);
+                });
+
+                page.render('jira-controls', {}, function (err, html) {
+                    controllers.html(html);
+                    $('.next', controllers).click(function (e) {
+                        var start = parseInt($(this).parent().data('start'), 10) + RESULT_COUNT;
+                        if (context.type === 'search') {
+                            radio('jira search').broadcast(false, context.query, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        if (context.type === 'recent') {
+                            radio('jira recent').broadcast(false, context.issue, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        radio('jira history').broadcast(false, context.issue, {
+                            start: start,
+                            count: RESULT_COUNT
+                        });
+                    });
+                    //}
+                    $('.prev', controllers).click(function (e) {
+                        var start = parseInt($(this).parent().data('start'), 10) - RESULT_COUNT;
+                        if (context.type === 'search') {
+                            radio('jira search').broadcast(false, context.query, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        if (context.type === 'recent') {
+                            radio('jira recent').broadcast(false, context.issue, {
+                                start: start,
+                                count: RESULT_COUNT
+                            });
+                            return;
+                        }
+                        radio('jira history').broadcast(false, context.issue, {
+                            start: start,
+                            count: RESULT_COUNT
+                        });
+                    });
+                    $('.history', controllers).click(function (e) {
+                        radio('jira history').broadcast(false, context.issue);
+                    });
+                    $('.recent', controllers).click(function (e) {
+                        radio('jira recent').broadcast(false, context.issue);
+                    });
+                    $('.search', controllers).click(function (e) {
+                        radio('jira search').broadcast(false, context.query);
+                    });
+                    radio('jira search').broadcast(false);
                 });
             }
         });
@@ -358,6 +415,7 @@ var jira = {};
                 });
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
+                $('.paging', controllers).data('start', context.paging.start).show();
                 $('.threads', content).on('click', '.thread a', function (e) {
                     var id = $(this).data('id');
                     issue(id, function (err, thread) {
@@ -378,88 +436,20 @@ var jira = {};
                         container: 'body'
                     }).popover('show');
                 });
-            });
-            page.render('jira-controls', {}, function (err, html) {
-                controllers.html(html);
-                $('.paging', controllers).data('start', paging.start);
+
+                var next = $('.next', controllers).show();
                 if (issues.length < RESULT_COUNT) {
-                    $('.next', controllers).attr('disabled', 'disabled');
+                    next.attr('disabled', 'disabled');
                 } else {
-                    $('.next', controllers).click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) + RESULT_COUNT;
-                        if (context.type === 'search') {
-                            radio('jira search').broadcast(false, context.query, {
-                                start: start,
-                                count: RESULT_COUNT
-                            });
-                            return;
-                        }
-                        if (context.type === 'recent') {
-                            radio('jira recent').broadcast(false, context.issue, {
-                                start: start,
-                                count: RESULT_COUNT
-                            });
-                            return;
-                        }
-                        radio('jira history').broadcast(false, context.issue, {
-                            start: start,
-                            count: RESULT_COUNT
-                        });
-                    }).removeAttr('disabled');
+                    next.removeAttr('disabled');
                 }
-                if (paging.start == 0) {
-                    $('.prev', controllers).attr('disabled', 'disabled');
+
+                var prev = $('.prev', controllers).show();
+                if (context.paging.start == 0) {
+                    prev.attr('disabled', 'disabled');
                 } else {
-                    $('.prev', controllers).click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) - RESULT_COUNT;
-                        if (context.type === 'search') {
-                            radio('jira search').broadcast(false, context.query, {
-                                start: start,
-                                count: RESULT_COUNT
-                            });
-                            return;
-                        }
-                        if (context.type === 'recent') {
-                            radio('jira recent').broadcast(false, context.issue, {
-                                start: start,
-                                count: RESULT_COUNT
-                            });
-                            return;
-                        }
-                        radio('jira history').broadcast(false, context.issue, {
-                            start: start,
-                            count: RESULT_COUNT
-                        });
-                    }).removeAttr('disabled');
+                    prev.removeAttr('disabled');
                 }
-                $('.history', controllers).click(function (e) {
-                    context.type = 'history';
-                    $('.tabs .btn', controllers).removeClass('active');
-                    $(this).addClass('active');
-                    $('.search', tools).hide();
-                    $('.in-project', tools).hide();
-                    $('.back', tools).hide();
-                    radio('jira history').broadcast(false, context.issue);
-                });
-                $('.recent', controllers).click(function (e) {
-                    context.type = 'recent';
-                    $('.tabs .btn', controllers).removeClass('active');
-                    $(this).addClass('active');
-                    $('.search', tools).hide();
-                    $('.in-project', tools).hide();
-                    $('.back', tools).hide();
-                    radio('jira recent').broadcast(false, context.issue);
-                });
-                $('.search', controllers).click(function (e) {
-                    context.type = 'search';
-                    $('.tabs .btn', controllers).removeClass('active');
-                    $(this).addClass('active');
-                    $('.search', tools).show();
-                    $('.in-project', tools).show();
-                    $('.back', tools).hide();
-                    radio('jira search').broadcast(false, context.query);
-                });
-                $('.' + context.type, controllers).addClass('active');
             });
         });
 
@@ -484,10 +474,14 @@ var jira = {};
         //search request from jira
         radio('jira search').subscribe(function (err, query, paging) {
             context.type = 'search';
+            $(this).addClass('active');
+            $('.back', tools).hide();
             $('.tabs .btn', controllers).removeClass('active');
             $('.' + context.type, controllers).addClass('active');
-            $('.search', tools).val(query);
+            $('.search', tools).val(query).show();
+            $('.in-project', tools).show();
             if (!query) {
+                $('.paging', controllers).hide();
                 content.empty();
                 return;
             }
@@ -510,6 +504,9 @@ var jira = {};
 
         radio('jira history').subscribe(function (err, issue, paging) {
             context.type = 'history';
+            $('.search', tools).hide();
+            $('.in-project', tools).hide();
+            $('.back', tools).hide();
             $('.tabs .btn', controllers).removeClass('active');
             $('.' + context.type, controllers).addClass('active');
             paging = paging || {
@@ -523,6 +520,9 @@ var jira = {};
 
         radio('jira recent').subscribe(function (err, issue, paging) {
             context.type = 'recent';
+            $('.search', tools).hide();
+            $('.in-project', tools).hide();
+            $('.back', tools).hide();
             $('.tabs .btn', controllers).removeClass('active');
             $('.' + context.type, controllers).addClass('active');
             paging = paging || {
@@ -612,8 +612,3 @@ var jira = {};
     };
 
 }());
-
-//issue.fields.project.value.self --> o.lead.displayName, name
-//issue.fields.status.value.name
-
-//"a wso2 esb 4.5.1 and esb wso2 application server 5.1 esb several bps version we have is 2.0.1 and also there is another cluster of ESB 4.8.0 servers".match(/(?:[a-zA-Z]+[\s]+){1,3}[0-9]\.[0-9](\.[0-9]+)?\b/ig)

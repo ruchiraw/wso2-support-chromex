@@ -88,7 +88,7 @@ $(function () {
                     radio('page change').broadcast(false, 'gmail');
                 } else if (issue) {
                     radio('gmail search').broadcast(false, issue.key);
-                    radio('jira history').broadcast(false, issue);
+                    //radio('jira history').broadcast(false, issue);
                     radio('page change').broadcast(false, 'gmail');
                 } else {
                     radio('page change').broadcast(false, 'eye');

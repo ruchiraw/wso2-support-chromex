@@ -6,6 +6,7 @@
     "background": {
         "scripts": ["js/background.js"]
     },
+    "options_page": "options.html",
     "sandbox": {
         "pages": ["sandbox.html"]
     },
