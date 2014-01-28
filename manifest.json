@@ -20,6 +20,7 @@
         "https://api.stackexchange.com/",
         "tabs",
         "notifications",
+        "storage",
         "<all_urls>"
     ],
     "page_action": {

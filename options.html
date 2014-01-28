@@ -1,22 +1,158 @@
 <html>
-<head><title>My Test Extension Options</title></head>
-
+<head>
+    <title>WSO2 Support Extension</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/options.css"/>
+</head>
 <body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>WSO2 Support Extension - Preferences</h2>
 
-Favorite Color:
-<select id="color">
-    <option value="red">red</option>
-    <option value="green">green</option>
-    <option value="blue">blue</option>
-    <option value="yellow">yellow</option>
-</select>
+            <div class="messages">
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Preferences were saved successfully.</strong>
+                </div>
+                <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <strong>Error while saving preferences.</strong>
+                </div>
+            </div>
+            <form role="form">
+                <div class="form-group">
+                    <label for="initial-tab">Initial Tab</label>
+                    <select id="initial-tab" class="form-control">
+                        <option value="eye">Eye</option>
+                        <option value="gmail">GMail</option>
+                        <option value="jira">JIRA</option>
+                        <option value="stackoverflow">StackOverflow</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Search Issue Info</label>
 
-<br>
+                    <div id="default-search-gmail" class="checkbox">
+                        <label>
+                            <input type="checkbox">GMail
+                        </label>
+                    </div>
+                    <div id="default-search-jira" class="checkbox">
+                        <label>
+                            <input type="checkbox">JIRA
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Search Selected Text</label>
 
-<div id="status"></div>
-<button id="save">Save</button>
+                    <div id="selection-search-gmail" class="checkbox">
+                        <label>
+                            <input type="checkbox">GMail
+                        </label>
+                    </div>
+                    <div id="selection-search-jira" class="checkbox">
+                        <label>
+                            <input type="checkbox">JIRA
+                        </label>
+                    </div>
+                    <div id="selection-search-stackoverflow" class="checkbox">
+                        <label>
+                            <input type="checkbox">StackOverflow
+                        </label>
+                    </div>
+                    <div id="selection-search-google" class="checkbox">
+                        <label>
+                            <input type="checkbox">Google
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="jira-initial-tab">JIRA Initial Tab</label>
+                    <select id="jira-initial-tab" class="form-control">
+                        <option value="search">Search</option>
+                        <option value="history">History</option>
+                        <option value="recent">Recent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Eye Project Info</label>
+
+                    <div id="eye-project-info" class="checkbox">
+                        <label>
+                            <input type="checkbox">Auto Load
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Eye Search Fields</label>
+
+                    <div id="eye-search-gmail" class="checkbox">
+                        <label>
+                            <input type="checkbox">GMail
+                        </label>
+                    </div>
+                    <div id="eye-search-jira" class="checkbox">
+                        <label>
+                            <input type="checkbox">JIRA
+                        </label>
+                    </div>
+                    <div id="eye-search-stackoverflow" class="checkbox">
+                        <label>
+                            <input type="checkbox">StackOverflow
+                        </label>
+                    </div>
+                    <div id="eye-search-google" class="checkbox">
+                        <label>
+                            <input type="checkbox">Google
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="gmail-results-count">GMail Results Count</label>
+                    <select id="gmail-results-count" class="form-control">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gmail-search-prefix">GMail Search Prefix</label>
+                    <input id="gmail-search-prefix" type="text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="jira-results-count">JIRA Results Count</label>
+                    <select id="jira-results-count" class="form-control">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="stackoverflow-results-count">StackOverflow Results Count</label>
+                    <select id="stackoverflow-results-count" class="form-control">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                    </select>
+                </div>
+                <button id="save-prefs" type="button" class="btn btn-default">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/option-defaults.js"></script>
+<script src="js/options.js"></script>
 </body>
-
-<script src="options.js"></script>
-
 </html>
+

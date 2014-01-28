@@ -4,7 +4,7 @@ var stackoverflow = {};
 
     var ENDPOINT = 'https://api.stackexchange.com/2.1/';
 
-    var RESULT_COUNT = 20;
+    var resultsCount;
 
     var initialized = false;
 
@@ -15,7 +15,7 @@ var stackoverflow = {};
     var search = function (query, cb, paging) {
         paging = paging || { page: 1 };
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=relevance&site=stackoverflow&filter=!9f*CwKRWa&page=' + paging.page + '&pagesize=' + RESULT_COUNT + '&q=' + query, true);
+        xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=relevance&site=stackoverflow&filter=!9f*CwKRWa&page=' + paging.page + '&pagesize=' + resultsCount + '&q=' + query, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function (e) {
             if (xhr.status === 200) {
@@ -42,16 +42,12 @@ var stackoverflow = {};
         xhr.send(null);
     };
 
-    stackoverflow.init = function (content, tools, controllers) {
-        //page change event
-        radio('page change').subscribe(function (err, id) {
-            if (id !== 'stackoverflow') {
-                return;
-            }
-            content.scrollTop(0).perfectScrollbar('update');
+    stackoverflow.init = function (content, tools, controllers, o, options) {
+        resultsCount = options.stackoverflow.count;
+        var initialize = function () {
             if (!initialized) {
                 initialized = true;
-                page.render('stackoverflow-tools', {
+                render('stackoverflow-tools', {
                     query: context.query
                 }, function (err, html) {
                     tools.html(html);
@@ -64,6 +60,14 @@ var stackoverflow = {};
                     });
                 });
             }
+        };
+        //page change event
+        radio('page change').subscribe(function (err, id) {
+            if (id !== 'stackoverflow') {
+                return;
+            }
+            content.scrollTop(0).perfectScrollbar('update');
+            initialize();
         });
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
@@ -79,7 +83,7 @@ var stackoverflow = {};
         //search response from the eye
         radio('stackoverflow results').subscribe(function (err, query, threads, paging) {
             context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
-            page.render('stackoverflow', threads, function (err, html) {
+            render('stackoverflow', threads, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
                     suppressScrollX: true,
@@ -98,10 +102,10 @@ var stackoverflow = {};
                     });
                 });
             });
-            page.render('gmail-controls', {}, function (err, html) {
+            render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);
                 $('.paging', controllers).data('page', paging.page);
-                if (threads.length < RESULT_COUNT) {
+                if (threads.length < resultsCount) {
                     $('.next', controllers).attr('disabled', 'disabled');
                 } else {
                     $('.next', controllers).click(function (e) {
@@ -139,7 +143,6 @@ var stackoverflow = {};
                 $('.search', tools).val(query);
                 radio('page load').broadcast(false, 'stackoverflow');
                 search(query, function (err, threads, paging) {
-                    console.log(threads);
                     radio('page loaded').broadcast(false, 'stackoverflow');
                     radio('stackoverflow results').broadcast(false, query, threads, paging);
                 }, paging);
@@ -167,7 +170,7 @@ var stackoverflow = {};
                 body: o.body,
                 thread: thread
             };
-            page.render('thread-stackoverflow', thread, function (err, html) {
+            render('thread-stackoverflow', thread, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
                     suppressScrollX: true,

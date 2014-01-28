@@ -8,14 +8,6 @@ $(function () {
 
     var pages = ['eye', 'gmail', 'jira', 'stackoverflow', 'google'];
 
-    var contexts = {};
-
-    var s4 = function () {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    };
-
     var URL = 'https://support.wso2.com';
 
     var ISSUE_PREFIX = URL + '/jira/browse/';
@@ -34,65 +26,56 @@ $(function () {
         };
     };
 
-    var guid = function () {
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-            s4() + '-' + s4() + s4() + s4();
-    };
-
-    page.render = function (path, data, cb) {
-        var req = new XMLHttpRequest();
-        req.open('GET', chrome.extension.getURL('templates/' + path + '.hbs'), true);
-        req.onload = function () {
-            if (req.status === 200) {
-                var id = guid();
-                var iframe = document.getElementById('sandbox');
-                iframe.contentWindow.postMessage({
-                    id: id,
-                    source: req.responseText,
-                    data: data
-                }, '*');
-                contexts[id] = cb;
-            } else {
-                cb(true);
-            }
-        };
-        req.send(null);
-    };
-
-    window.addEventListener('message', function (event) {
-        var cb = contexts[event.data.id];
-        if (event.data.error) {
-            cb(true);
-            return;
-        }
-        cb(false, event.data.html);
-    });
-
     $('#sandbox').load(function () {
-        chrome.tabs.query({
-            active: true
-        }, function (tabs) {
-            var tab = tabs[0];
-            chrome.tabs.executeScript({
-                code: 'window.getSelection().toString();'
-            }, function (selection) {
-                var issue = tab.url.indexOf(ISSUE_PREFIX) === 0 ? decodeUrl(tab.url) : null;
-                pages.forEach(function (id) {
-                    window[id].init($('.' + id, contents), $('.' + id, tools), $('.' + id, controllers), {
-                        issue: issue
-                    });
+        chrome.storage.local.get('options', function (result) {
+            var opts = result.options || options;
+            if (!opts) {
+                chrome.storage.local.set({
+                    options: opts
                 });
-                selection = selection ? selection[0] : null;
-                if (selection) {
-                    radio('eye search').broadcast(false, '"' + selection + '"', ['gmail', 'jira', 'stackoverflow', 'google']);
-                    radio('page change').broadcast(false, 'gmail');
-                } else if (issue) {
-                    radio('gmail search').broadcast(false, issue.key);
-                    //radio('jira history').broadcast(false, issue);
-                    radio('page change').broadcast(false, 'gmail');
-                } else {
-                    radio('page change').broadcast(false, 'eye');
-                }
+            }
+            chrome.tabs.query({
+                active: true
+            }, function (tabs) {
+                var tab = tabs[0];
+                chrome.tabs.executeScript({
+                    code: 'window.getSelection().toString();'
+                }, function (selection) {
+                    var issue = tab.url.indexOf(ISSUE_PREFIX) === 0 ? decodeUrl(tab.url) : null;
+                    pages.forEach(function (id) {
+                        window[id].init($('.' + id, contents), $('.' + id, tools), $('.' + id, controllers), {
+                            issue: issue
+                        }, opts);
+                    });
+                    selection = selection ? selection[0] : null;
+                    if (selection) {
+                        var tabs = [];
+                        if (opts.gmail.selection) {
+                            tabs.push('gmail');
+                        }
+                        if (opts.jira.selection) {
+                            tabs.push('jira');
+                        }
+                        if (opts.stackoverflow.selection) {
+                            tabs.push('stackoverflow');
+                        }
+                        if (opts.google.selection) {
+                            tabs.push('google');
+                        }
+                        radio('eye search').broadcast(false, '"' + selection + '"', tabs);
+                        radio('page change').broadcast(false, opts.tab);
+                    } else if (issue) {
+                        if (opts.gmail.issue) {
+                            radio('gmail search').broadcast(false, issue.key);
+                        }
+                        if (opts.jira.issue) {
+                            radio('jira history').broadcast(false, issue);
+                        }
+                        radio('page change').broadcast(false, opts.tab);
+                    } else {
+                        radio('page change').broadcast(false, opts.tab);
+                    }
+                });
             });
         });
     });
@@ -102,7 +85,7 @@ $(function () {
     });
 
     radio('page change').subscribe(function (err, id) {
-        $('.pager').find('.btn').removeClass('active').end()
+        $('.toolbar .pager').find('.btn').removeClass('active').end()
             .find('.btn.' + id).addClass('active');
 
         var tools = $('.tools');

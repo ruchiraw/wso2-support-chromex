@@ -4,9 +4,11 @@ var gmail = {};
 
     var GMAIL_SEARCH_EPR = 'https://script.google.com/a/macros/wso2.com/s/AKfycbyd5Aw3QA_B0yMZ1V1-T3iFN5yMkaodheP77RM6D8Otp64bApk/exec';
 
-    var RESULT_COUNT = 20;
+    var resultsCount;
 
     var context = {};
+
+    var prefix;
 
     var initialized = false;
 
@@ -20,7 +22,7 @@ var gmail = {};
                 radio('gmail searched').broadcast(true, query, xhr.statusText);
             }
         };
-        xhr.open('GET', GMAIL_SEARCH_EPR + '?query=' + query + '&start=' + paging.start + '&count=' + paging.count, true);
+        xhr.open('GET', GMAIL_SEARCH_EPR + '?query=' + (prefix ? (prefix + query) : query) + '&start=' + paging.start + '&count=' + paging.count, true);
         xhr.send(null);
     };
 
@@ -48,16 +50,13 @@ var gmail = {};
         xhr.send(null);
     };
 
-    gmail.init = function (content, tools, controllers) {
-        //page change event
-        radio('page change').subscribe(function (err, id) {
-            if (id !== 'gmail') {
-                return;
-            }
-            content.scrollTop(0).perfectScrollbar('update');
+    gmail.init = function (content, tools, controllers, o, options) {
+        resultsCount = options.gmail.count;
+        prefix = options.gmail.prefix;
+        var initialize = function () {
             if (!initialized) {
                 initialized = true;
-                page.render('gmail-tools', {
+                render('gmail-tools', {
                     query: context.query
                 }, function (err, html) {
                     tools.html(html);
@@ -70,6 +69,15 @@ var gmail = {};
                     });
                 });
             }
+        };
+
+        //page change event
+        radio('page change').subscribe(function (err, id) {
+            if (id !== 'gmail') {
+                return;
+            }
+            content.scrollTop(0).perfectScrollbar('update');
+            initialize();
         });
 
         //search request from the eye
@@ -81,7 +89,7 @@ var gmail = {};
         });
         //search request from gmail
         radio('gmail search').subscribe(function (err, query, paging) {
-            paging = paging || { start: 0, count: RESULT_COUNT };
+            paging = paging || { start: 0, count: resultsCount };
             context.id = null;
             context.query = query;
             context.paging = paging;
@@ -93,7 +101,7 @@ var gmail = {};
         //search response from gmail
         radio('gmail searched').subscribe(function (err, query, threads, paging) {
             radio('page loaded').broadcast(false, 'gmail');
-            page.render('gmail', threads, function (err, html) {
+            render('gmail', threads, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
                     suppressScrollX: true,
@@ -121,17 +129,17 @@ var gmail = {};
                         radio('gmail search').broadcast(false, query);
                     });
             });
-            page.render('gmail-controls', {}, function (err, html) {
+            render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);
                 $('.paging', controllers).data('start', paging.start);
-                if (threads.length < RESULT_COUNT) {
+                if (threads.length < resultsCount) {
                     $('.next', controllers).attr('disabled', 'disabled');
                 } else {
                     $('.next', controllers).click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) + RESULT_COUNT;
+                        var start = parseInt($(this).parent().data('start'), 10) + resultsCount;
                         radio('gmail search').broadcast(false, query, {
                             start: start,
-                            count: RESULT_COUNT
+                            count: resultsCount
                         });
                     }).removeAttr('disabled');
                 }
@@ -139,10 +147,10 @@ var gmail = {};
                     $('.prev', controllers).attr('disabled', 'disabled');
                 } else {
                     $('.prev', controllers).click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) - RESULT_COUNT;
+                        var start = parseInt($(this).parent().data('start'), 10) - resultsCount;
                         radio('gmail search').broadcast(false, query, {
                             start: start,
-                            count: RESULT_COUNT
+                            count: resultsCount
                         });
                     }).removeAttr('disabled');
                 }
@@ -183,7 +191,7 @@ var gmail = {};
                 thread: thread.messages
             };
             matched(thread);
-            page.render('thread', thread, function (err, html) {
+            render('thread', thread, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
                     suppressScrollX: true,

@@ -6,13 +6,15 @@ var jira = {};
 
     var SEARCH_EPR = URL + '/jira/rest/api/2.0.alpha1/search';
 
-    var RESULT_COUNT = 10;
+    var resultsCount = 10;
 
     var ISSUE_EPR = URL + '/jira/rest/api/2.0.alpha1/issue/';
 
     var PROJECT_EPR = URL + '/jira/rest/api/2.0.alpha1/project/';
 
     var initialized = false;
+
+    var processed = false;
 
     var context = {
         data: {}
@@ -171,7 +173,7 @@ var jira = {};
                     issues: []
                 };
             start = context.recent - paging.start;
-            length = start - RESULT_COUNT > 0 ? start - RESULT_COUNT : 0;
+            length = start - resultsCount > 0 ? start - resultsCount : 0;
             for (i = start; i > length; i--) {
                 results.issues.push({
                     key: o.project + '-' + i
@@ -196,7 +198,7 @@ var jira = {};
                 issues: []
             };
         start = o.id > paging.start ? o.id - paging.start : 0;
-        length = start - RESULT_COUNT > 0 ? start - RESULT_COUNT : 0;
+        length = start - resultsCount > 0 ? start - resultsCount : 0;
         for (i = start; i > length; i--) {
             results.issues.push({
                 key: o.project + '-' + i
@@ -295,17 +297,13 @@ var jira = {};
         xhr.send(JSON.stringify(data));
     };
 
-    jira.init = function (content, tools, controllers, o) {
+    jira.init = function (content, tools, controllers, o, options) {
+        resultsCount = options.jira.count;
         context.issue = o.issue;
-        //page change event
-        radio('page change').subscribe(function (err, id) {
-            if (id !== 'jira') {
-                return;
-            }
-            content.scrollTop(0).perfectScrollbar('update');
+        var initialize = function () {
             if (!initialized) {
                 initialized = true;
-                page.render('jira-tools', {
+                render('jira-tools', {
                     query: context.query
                 }, function (err, html) {
                     tools.html(html);
@@ -328,59 +326,51 @@ var jira = {};
                         inProject = true;
                         el.addClass('active');
                     });
-                    /*if (context.type === 'search') {
-                     search.show();
-                     project.show();
-                     } else {
-                     search.hide();
-                     project.hide();
-                     }*/
-                    //radio('jira search').broadcast(false, context.query);
                 });
 
-                page.render('jira-controls', {}, function (err, html) {
+                render('jira-controls', {}, function (err, html) {
                     controllers.html(html);
                     $('.next', controllers).click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) + RESULT_COUNT;
+                        var start = parseInt($(this).parent().data('start'), 10) + resultsCount;
                         if (context.type === 'search') {
                             radio('jira search').broadcast(false, context.query, {
                                 start: start,
-                                count: RESULT_COUNT
+                                count: resultsCount
                             });
                             return;
                         }
                         if (context.type === 'recent') {
                             radio('jira recent').broadcast(false, context.issue, {
                                 start: start,
-                                count: RESULT_COUNT
+                                count: resultsCount
                             });
                             return;
                         }
                         radio('jira history').broadcast(false, context.issue, {
                             start: start,
-                            count: RESULT_COUNT
+                            count: resultsCount
                         });
                     });
                     //}
                     $('.prev', controllers).click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) - RESULT_COUNT;
+                        var start = parseInt($(this).parent().data('start'), 10) - resultsCount;
                         if (context.type === 'search') {
                             radio('jira search').broadcast(false, context.query, {
                                 start: start,
-                                count: RESULT_COUNT
+                                count: resultsCount
                             });
                             return;
                         }
                         if (context.type === 'recent') {
                             radio('jira recent').broadcast(false, context.issue, {
                                 start: start,
-                                count: RESULT_COUNT
+                                count: resultsCount
                             });
                             return;
                         }
                         radio('jira history').broadcast(false, context.issue, {
                             start: start,
-                            count: RESULT_COUNT
+                            count: resultsCount
                         });
                     });
                     $('.history', controllers).click(function (e) {
@@ -392,9 +382,18 @@ var jira = {};
                     $('.search', controllers).click(function (e) {
                         radio('jira search').broadcast(false, context.query);
                     });
-                    radio('jira search').broadcast(false);
+                    radio('jira ' + options.jira.tab).broadcast(false,
+                        options.jira.tab === 'search' ? context.query : context.issue);
                 });
             }
+        };
+        //page change event
+        radio('page change').subscribe(function (err, id) {
+            if (id !== 'jira') {
+                return;
+            }
+            content.scrollTop(0).perfectScrollbar('update');
+            initialize();
         });
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
@@ -406,7 +405,7 @@ var jira = {};
         //search response from the eye
         radio('jira results').subscribe(function (err, query, issues, paging) {
             context.issues = issues;
-            page.render('jira', issues, function (err, html) {
+            render('jira', issues, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
                     suppressScrollX: true,
@@ -438,7 +437,7 @@ var jira = {};
                 });
 
                 var next = $('.next', controllers).show();
-                if (issues.length < RESULT_COUNT) {
+                if (issues.length < resultsCount) {
                     next.attr('disabled', 'disabled');
                 } else {
                     next.removeAttr('disabled');
@@ -473,6 +472,7 @@ var jira = {};
 
         //search request from jira
         radio('jira search').subscribe(function (err, query, paging) {
+            initialize();
             context.type = 'search';
             $(this).addClass('active');
             $('.back', tools).hide();
@@ -487,7 +487,7 @@ var jira = {};
             }
             paging = paging || {
                 start: 0,
-                count: RESULT_COUNT
+                count: resultsCount
             };
             context.paging = paging;
             radio('page load').broadcast(false, 'jira');
@@ -503,6 +503,7 @@ var jira = {};
         });
 
         radio('jira history').subscribe(function (err, issue, paging) {
+            initialize();
             context.type = 'history';
             $('.search', tools).hide();
             $('.in-project', tools).hide();
@@ -511,7 +512,7 @@ var jira = {};
             $('.' + context.type, controllers).addClass('active');
             paging = paging || {
                 start: 0,
-                count: RESULT_COUNT
+                count: resultsCount
             };
             context.paging = paging;
             radio('page load').broadcast(false, 'jira');
@@ -519,6 +520,7 @@ var jira = {};
         });
 
         radio('jira recent').subscribe(function (err, issue, paging) {
+            initialize();
             context.type = 'recent';
             $('.search', tools).hide();
             $('.in-project', tools).hide();
@@ -527,7 +529,7 @@ var jira = {};
             $('.' + context.type, controllers).addClass('active');
             paging = paging || {
                 start: 0,
-                count: RESULT_COUNT
+                count: resultsCount
             };
             context.paging = paging;
             radio('page load').broadcast(false, 'jira');
@@ -539,7 +541,7 @@ var jira = {};
             if (context.type === 'search') {
                 matched(thread);
             }
-            page.render('thread-jira', thread, function (err, html) {
+            render('thread-jira', thread, function (err, html) {
                 content.html(html);
                 content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
                     suppressScrollX: true,

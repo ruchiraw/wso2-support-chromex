@@ -1,31 +1,67 @@
-// Saves options to localStorage.
-function save_options() {
-    var select = document.getElementById("color");
-    var color = select.children[select.selectedIndex].value;
-    localStorage["favorite_color"] = color;
+$(function () {
+    //chrome.storage.local.clear();
+    chrome.storage.local.get('options', function (result) {
+        var opts = result.options || options;
 
-    // Update status to let user know options were saved.
-    var status = document.getElementById("status");
-    status.innerHTML = "Options Saved.";
-    setTimeout(function () {
-        status.innerHTML = "";
-    }, 750);
-}
+        $('#initial-tab').val(opts.tab);
 
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-    var favorite = localStorage["favorite_color"];
-    if (!favorite) {
-        return;
-    }
-    var select = document.getElementById("color");
-    for (var i = 0; i < select.children.length; i++) {
-        var child = select.children[i];
-        if (child.value == favorite) {
-            child.selected = "true";
-            break;
-        }
-    }
-}
-document.addEventListener('DOMContentLoaded', restore_options);
-document.querySelector('#save').addEventListener('click', save_options);
+        $('#eye-project-info input').prop('checked', opts.eye.project);
+
+        $('#eye-search-gmail input').prop('checked', opts.gmail.eye);
+        $('#gmail-results-count').val(opts.gmail.count);
+        $('#gmail-search-prefix').val(opts.gmail.prefix);
+        $('#default-search-gmail input').prop('checked', opts.gmail.issue);
+        $('#selection-search-gmail input').prop('checked', opts.gmail.selection);
+
+        $('#jira-initial-tab').val(opts.jira.tab);
+        $('#eye-search-jira input').prop('checked', opts.jira.eye);
+        $('#jira-results-count').val(opts.jira.count);
+        $('#default-search-jira input').prop('checked', opts.jira.issue);
+        $('#selection-search-jira input').prop('checked', opts.jira.selection);
+
+        $('#eye-search-stackoverflow input').prop('checked', opts.stackoverflow.eye);
+        $('#stackoverflow-results-count').val(opts.stackoverflow.count);
+        $('#selection-search-stackoverflow input').prop('checked', opts.stackoverflow.selection);
+
+        $('#eye-search-google input').prop('checked', opts.google.eye);
+        $('#selection-search-google input').prop('checked', opts.google.selection);
+
+        $('#save-prefs').click(function (e) {
+            var options = {
+                tab: $('#initial-tab').val(),
+                eye: {
+                    project: $('#eye-project-info input').is(":checked")
+                },
+                gmail: {
+                    eye: $('#eye-search-gmail input').is(":checked"),
+                    count: parseInt($('#gmail-results-count').val(), 10),
+                    prefix: $('#gmail-search-prefix').val(),
+                    issue: $('#default-search-gmail input').is(":checked"),
+                    selection: $('#selection-search-gmail input').is(":checked")
+                },
+                jira: {
+                    eye: $('#eye-search-jira input').is(":checked"),
+                    count: parseInt($('#jira-results-count').val(), 10),
+                    tab: $('#jira-initial-tab').val(),
+                    issue: $('#default-search-jira input').is(":checked"),
+                    selection: $('#selection-search-jira input').is(":checked")
+                },
+                stackoverflow: {
+                    eye: $('#eye-search-stackoverflow input').is(":checked"),
+                    count: parseInt($('#stackoverflow-results-count').val(), 10),
+                    selection: $('#selection-search-stackoverflow input').is(":checked")
+                },
+                google: {
+                    eye: $('#eye-search-google input').is(":checked"),
+                    selection: $('#selection-search-google input').is(":checked")
+                }
+            };
+
+            chrome.storage.local.set({
+                options: options
+            }, function () {
+                $('.messages .alert-info').show();
+            });
+        });
+    });
+});

@@ -7,3 +7,7 @@
     margin: 20px auto 0;
     display: table;
 }
+
+.controls .eye .load-project-info {
+    background: url('/images/project.png') no-repeat transparent center;
+}
