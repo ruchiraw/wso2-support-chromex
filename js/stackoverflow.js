@@ -13,7 +13,6 @@ var stackoverflow = {};
     };
 
     var search = function (query, cb, paging) {
-        paging = paging || { page: 1 };
         var xhr = new XMLHttpRequest();
         xhr.open('GET', ENDPOINT + 'search/advanced?order=desc&sort=relevance&site=stackoverflow&filter=!9f*CwKRWa&page=' + paging.page + '&pagesize=' + resultsCount + '&q=' + query, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -136,13 +135,13 @@ var stackoverflow = {};
             if (!query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
                 context.query = query;
-                context.paging = paging;
+                context.paging = paging || { page: 1 };
                 $('.search', tools).val(query);
                 radio('page load').broadcast(false, 'stackoverflow');
                 search(query, function (err, threads, paging) {
                     radio('page loaded').broadcast(false, 'stackoverflow');
                     radio('stackoverflow results').broadcast(false, query, threads, paging);
-                }, paging);
+                }, context.paging);
             }
         });
 
