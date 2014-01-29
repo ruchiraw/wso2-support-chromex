@@ -54,11 +54,7 @@ var eye = {};
             result.description = result.description.replace(/^\s*<br\/?>/i, '');
             render('eye-project-info', result, function (err, html) {
                 $('.project-info', content).html(html);
-                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                    suppressScrollX: true,
-                    minScrollbarLength: 40,
-                    wheelSpeed: 40
-                });
+                page.update(true);
                 $('.load-project-info', controllers).hide();
             });
         });

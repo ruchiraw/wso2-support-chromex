@@ -76,8 +76,8 @@ var gmail = {};
             if (id !== 'gmail') {
                 return;
             }
-            content.scrollTop(0).perfectScrollbar('update');
             initialize();
+            page.update(true);
         });
 
         //search request from the eye
@@ -103,11 +103,7 @@ var gmail = {};
             radio('page loaded').broadcast(false, 'gmail');
             render('gmail', threads, function (err, html) {
                 content.html(html);
-                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                    suppressScrollX: true,
-                    minScrollbarLength: 40,
-                    wheelSpeed: 40
-                }).scrollTop(0);
+                page.update(true);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
                 $('.threads', content).on('click', '.thread .subject-link',function (e) {
@@ -193,11 +189,7 @@ var gmail = {};
             matched(thread);
             render('thread', thread, function (err, html) {
                 content.html(html);
-                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                    suppressScrollX: true,
-                    minScrollbarLength: 40,
-                    wheelSpeed: 40
-                });
+                page.update(true);
                 $('.back', tools).unbind().click(function (e) {
                     radio('gmail searched').broadcast(false, context.query, context.threads, context.paging);
                 }).show();
@@ -214,11 +206,7 @@ var gmail = {};
                             .find('.message').addClass('ash');
                         el.removeClass('collapze').addClass('expand');
                     }
-                    content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                        suppressScrollX: true,
-                        minScrollbarLength: 40,
-                        wheelSpeed: 40
-                    });
+                    page.update(true);
                 }).end().show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body
@@ -230,7 +218,7 @@ var gmail = {};
                     $('.summary', self).addClass('hidden');
                     $('.body', self).removeClass('hidden');
                     self.removeClass('ash');
-                    content.perfectScrollbar('update');
+                    page.update();
                 }).on('click', '.header',function (e) {
                         //hiding body
                         var self = $(this);
@@ -242,12 +230,12 @@ var gmail = {};
                         $('.summary', self).removeClass('hidden');
                         self.siblings('.body').addClass('hidden');
                         self.closest('.message').addClass('ash');
-                        content.perfectScrollbar('update');
+                        page.update();
                     }).on('click', '.gmail-extra',function (e) {
                         e.stopPropagation();
                         var self = $(this);
                         self.siblings('.gmail_extra').toggle();
-                        content.perfectScrollbar('update');
+                        page.update();
                     }).find('.gmail_extra').before('<div class="gmail-extra">...</div>');
             });
         });

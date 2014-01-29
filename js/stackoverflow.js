@@ -66,8 +66,8 @@ var stackoverflow = {};
             if (id !== 'stackoverflow') {
                 return;
             }
-            content.scrollTop(0).perfectScrollbar('update');
             initialize();
+            page.update(true);
         });
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
@@ -85,11 +85,7 @@ var stackoverflow = {};
             context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
             render('stackoverflow', threads, function (err, html) {
                 content.html(html);
-                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                    suppressScrollX: true,
-                    minScrollbarLength: 40,
-                    wheelSpeed: 40
-                });
+                page.update(true);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
                 $('.threads', content).on('click', '.thread a', function (e) {
@@ -172,11 +168,7 @@ var stackoverflow = {};
             };
             render('thread-stackoverflow', thread, function (err, html) {
                 content.html(html);
-                content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                    suppressScrollX: true,
-                    minScrollbarLength: 40,
-                    wheelSpeed: 40
-                });
+                page.update(true);
                 $('.back', tools).unbind().click(function (e) {
                     //TODO
                     radio('stackoverflow results').broadcast(false, context.query, context.data, context.paging);
@@ -194,11 +186,7 @@ var stackoverflow = {};
                             .find('.message').addClass('ash');
                         el.removeClass('collapze').addClass('expand');
                     }
-                    content.perfectScrollbar('destroy').scrollTop(0).perfectScrollbar({
-                        suppressScrollX: true,
-                        minScrollbarLength: 40,
-                        wheelSpeed: 40
-                    });
+                    page.update(true);
                 }).end().show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body
@@ -210,7 +198,7 @@ var stackoverflow = {};
                     $('.summary', self).addClass('hidden');
                     $('.body', self).removeClass('hidden');
                     self.removeClass('ash');
-                    content.perfectScrollbar('update');
+                    page.update();
                 }).on('click', '.header', function (e) {
                         //hiding body
                         var self = $(this);
@@ -222,7 +210,7 @@ var stackoverflow = {};
                         $('.summary', self).removeClass('hidden');
                         self.siblings('.body').addClass('hidden');
                         self.closest('.message').addClass('ash');
-                        content.perfectScrollbar('update');
+                        page.update();
                     });
             });
         });

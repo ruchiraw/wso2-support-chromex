@@ -116,4 +116,17 @@ $(function () {
     $(document).on('click', function (e) {
         $('.popper').popover('destroy');
     });
+
+    contents.perfectScrollbar({
+        suppressScrollX: true,
+        minScrollbarLength: 40,
+        wheelSpeed: 40
+    });
+
+    page.update = function (scroll) {
+        if (scroll) {
+            contents.scrollTop(0);
+        }
+        contents.perfectScrollbar('update');
+    };
 });
