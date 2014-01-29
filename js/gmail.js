@@ -131,7 +131,7 @@ var gmail = {};
                 if (threads.length < resultsCount) {
                     $('.next', controllers).attr('disabled', 'disabled');
                 } else {
-                    $('.next', controllers).click(function (e) {
+                    $('.next', controllers).unbind().click(function (e) {
                         var start = parseInt($(this).parent().data('start'), 10) + resultsCount;
                         radio('gmail search').broadcast(false, query, {
                             start: start,
@@ -142,7 +142,7 @@ var gmail = {};
                 if (paging.start == 0) {
                     $('.prev', controllers).attr('disabled', 'disabled');
                 } else {
-                    $('.prev', controllers).click(function (e) {
+                    $('.prev', controllers).unbind().click(function (e) {
                         var start = parseInt($(this).parent().data('start'), 10) - resultsCount;
                         radio('gmail search').broadcast(false, query, {
                             start: start,
@@ -150,7 +150,7 @@ var gmail = {};
                         });
                     }).removeAttr('disabled');
                 }
-                $('.popup', controllers).click(function (e) {
+                $('.popup', controllers).unbind().click(function (e) {
                     chrome.tabs.query({
                         url: 'https://mail.google.com/mail/u/0/*'
                     }, function (tabs) {
@@ -160,7 +160,8 @@ var gmail = {};
                             //create a new tab
                             chrome.tabs.create({
                                 url: url,
-                                active: false
+                                active: false,
+                                index: o.tab.index + 1
                             });
                             return;
                         }

@@ -104,7 +104,7 @@ var stackoverflow = {};
                 if (threads.length < resultsCount) {
                     $('.next', controllers).attr('disabled', 'disabled');
                 } else {
-                    $('.next', controllers).click(function (e) {
+                    $('.next', controllers).unbind().click(function (e) {
                         var page = parseInt($(this).parent().data('page'), 10) + 1;
                         radio('stackoverflow search').broadcast(false, query, {
                             page: page
@@ -114,18 +114,19 @@ var stackoverflow = {};
                 if (paging.page == 1) {
                     $('.prev', controllers).attr('disabled', 'disabled');
                 } else {
-                    $('.prev', controllers).click(function (e) {
+                    $('.prev', controllers).unbind().click(function (e) {
                         var page = parseInt($(this).parent().data('page'), 10) - 1;
                         radio('stackoverflow search').broadcast(false, query, {
                             page: page
                         });
                     }).removeAttr('disabled');
                 }
-                $('.popup', controllers).click(function (e) {
+                $('.popup', controllers).unbind().click(function (e) {
                     //create a new tab
                     chrome.tabs.create({
                         url: context.url,
-                        active: false
+                        active: false,
+                        index: o.tab.index + 1
                     });
                 });
             });

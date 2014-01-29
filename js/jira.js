@@ -330,7 +330,7 @@ var jira = {};
 
                 render('jira-controls', {}, function (err, html) {
                     controllers.html(html);
-                    $('.next', controllers).click(function (e) {
+                    $('.next', controllers).unbind().click(function (e) {
                         var start = parseInt($(this).parent().data('start'), 10) + resultsCount;
                         if (context.type === 'search') {
                             radio('jira search').broadcast(false, context.query, {
@@ -352,7 +352,7 @@ var jira = {};
                         });
                     });
                     //}
-                    $('.prev', controllers).click(function (e) {
+                    $('.prev', controllers).unbind().click(function (e) {
                         var start = parseInt($(this).parent().data('start'), 10) - resultsCount;
                         if (context.type === 'search') {
                             radio('jira search').broadcast(false, context.query, {
@@ -373,13 +373,13 @@ var jira = {};
                             count: resultsCount
                         });
                     });
-                    $('.history', controllers).click(function (e) {
+                    $('.history', controllers).unbind().click(function (e) {
                         radio('jira history').broadcast(false, context.issue);
                     });
-                    $('.recent', controllers).click(function (e) {
+                    $('.recent', controllers).unbind().click(function (e) {
                         radio('jira recent').broadcast(false, context.issue);
                     });
-                    $('.search', controllers).click(function (e) {
+                    $('.search', controllers).unbind().click(function (e) {
                         radio('jira search').broadcast(false, context.query);
                     });
                     radio('jira ' + options.jira.tab).broadcast(false,
@@ -583,10 +583,11 @@ var jira = {};
                         self.closest('.message').addClass('ash');
                         page.update();
                     });
-                $('.popup', controllers).click(function (e) {
+                $('.popup', controllers).unbind().click(function (e) {
                     chrome.tabs.create({
                         url: URL + '/jira/browse/' + id,
-                        active: false
+                        active: false,
+                        index: o.tab.index + 1
                     });
                 }).removeClass('hidden');
             });

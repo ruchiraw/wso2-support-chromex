@@ -44,7 +44,8 @@ $(function () {
                     var issue = tab.url.indexOf(ISSUE_PREFIX) === 0 ? decodeUrl(tab.url) : null;
                     pages.forEach(function (id) {
                         window[id].init($('.' + id, contents), $('.' + id, tools), $('.' + id, controllers), {
-                            issue: issue
+                            issue: issue,
+                            tab: tab
                         }, opts);
                     });
                     selection = selection ? selection[0] : null;

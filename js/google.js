@@ -4,7 +4,7 @@ var google = {};
 
     var ENDPOINT = 'https://www.google.com/search?q=';
 
-    google.init = function (content, tools, controllers) {
+    google.init = function (content, tools, controllers, o) {
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
             if (filters.indexOf('google') === -1) {
@@ -17,7 +17,8 @@ var google = {};
             //create a new tab
             chrome.tabs.create({
                 url: ENDPOINT + query,
-                active: false
+                active: false,
+                index: o.tab.index + 1
             });
         });
     };
