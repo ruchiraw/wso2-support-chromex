@@ -410,6 +410,7 @@ var jira = {};
                 page.update(true);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
+                $('.popup').addClass('hidden');
                 $('.paging', controllers).data('start', context.paging.start).show();
                 $('.threads', content).on('click', '.thread a', function (e) {
                     var id = $(this).data('id');
