@@ -22,7 +22,7 @@ $(function () {
         return {
             key: key,
             project: key.substring(0, index),
-            id: key.substring(index + 1)
+            id: parseInt(key.substring(index + 1), 10)
         };
     };
 
