@@ -109,7 +109,6 @@ var gmail = {};
             radio('page loaded').broadcast(false, 'gmail');
             render('gmail', threads, function (err, html) {
                 content.html(html);
-                page.update(true);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
                 $('.threads', content).on('click', '.thread .subject-link',function (e) {
@@ -130,6 +129,7 @@ var gmail = {};
                         var query = '-label:' + $(this).data('label') + ' ' + context.query;
                         radio('gmail search').broadcast(false, query);
                     });
+                page.update(true);
             });
             render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);

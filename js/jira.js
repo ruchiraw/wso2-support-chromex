@@ -418,7 +418,6 @@ var jira = {};
             context.issues = issues;
             render('jira', issues, function (err, html) {
                 content.html(html);
-                page.update(true);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
                 $('.popup', controllers).addClass('hidden');
@@ -457,6 +456,7 @@ var jira = {};
                 } else {
                     prev.removeAttr('disabled');
                 }
+                page.update(true);
             });
         });
 
@@ -553,7 +553,6 @@ var jira = {};
             }
             render('thread-jira', thread, function (err, html) {
                 content.html(html);
-                page.update(true);
                 $('.back', tools).unbind().click(function (e) {
                     //TODO
                     radio('jira results').broadcast(false, context.query, context.issues, context.paging);
@@ -610,6 +609,7 @@ var jira = {};
                         index: o.tab.index + 1
                     });
                 }).removeClass('hidden');
+                page.update(true);
             });
         });
 

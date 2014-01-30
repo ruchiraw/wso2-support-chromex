@@ -54,8 +54,8 @@ var eye = {};
             result.description = result.description.replace(/^\s*<br\/?>/i, '');
             render('eye-project-info', result, function (err, html) {
                 $('.project-info', content).html(html);
-                page.update(true);
                 $('.load-project-info', controllers).hide();
+                page.update(true);
             });
         });
     };

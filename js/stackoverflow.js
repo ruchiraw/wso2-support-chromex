@@ -88,7 +88,6 @@ var stackoverflow = {};
             context.url = 'https://stackoverflow.com/search?q=' + encodeURIComponent(query);
             render('stackoverflow', threads, function (err, html) {
                 content.html(html);
-                page.update(true);
                 $('.back', tools).hide();
                 $('.xpand', controllers).hide();
                 $('.threads', content).on('click', '.thread a', function (e) {
@@ -100,6 +99,7 @@ var stackoverflow = {};
                         radio('stackoverflow thread loaded').broadcast(false, id, thread);
                     });
                 });
+                page.update(true);
             });
             render('gmail-controls', {}, function (err, html) {
                 controllers.html(html);
@@ -153,28 +153,36 @@ var stackoverflow = {};
 
         radio('stackoverflow thread loaded').subscribe(function (err, id, thread) {
             //radio('page loaded').broadcast(false, 'stackoverflow');
-            var o,
+            var d,
                 i = 0,
                 data = context.data,
                 length = data.length;
             while (i < length) {
                 if (data[i].question_id === id) {
-                    o = data[i];
+                    d = data[i];
                     break;
                 }
                 i++;
             }
             thread = {
                 query: context.query,
-                subject: o.title,
-                created: o.creation_date,
-                owner: o.owner.display_name,
-                body: o.body,
+                subject: d.title,
+                created: d.creation_date,
+                owner: d.owner.display_name,
+                body: d.body,
                 thread: thread
             };
             render('thread-stackoverflow', thread, function (err, html) {
                 content.html(html);
-                page.update(true);
+                $('.messages', content).on('click', '.body a', function (e) {
+                    e.preventDefault();
+                    chrome.tabs.create({
+                        url: $(this).attr('href'),
+                        active: false,
+                        index: o.tab.index + 1
+                    });
+
+                });
                 $('.back', tools).unbind().click(function (e) {
                     //TODO
                     radio('stackoverflow results').broadcast(false, context.query, context.data, context.paging);
@@ -218,6 +226,7 @@ var stackoverflow = {};
                         self.closest('.message').addClass('ash');
                         page.update();
                     });
+                page.update(true);
             });
         });
     };
