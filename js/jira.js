@@ -300,100 +300,111 @@ var jira = {};
     jira.init = function (content, tools, controllers, o, options) {
         resultsCount = options.jira.count;
         context.issue = o.issue;
-        var initialize = function () {
-            if (!initialized) {
-                initialized = true;
-                render('jira-tools', {
-                    query: context.query
-                }, function (err, html) {
-                    tools.html(html);
-                    var search = $('.search', tools);
-                    search.keydown(function (e) {
-                        if (e.keyCode == 13) {
-                            e.preventDefault();
-                            context.query = $(this).val();
-                            radio('jira search').broadcast(false, context.query);
-                        }
-                    });
-                    var project = $('.in-project', tools);
-                    project.click(function (e) {
-                        var el = $(this);
-                        if (el.hasClass('active')) {
-                            inProject = false;
-                            el.removeClass('active');
-                            return;
-                        }
-                        inProject = true;
-                        el.addClass('active');
-                    });
-                });
-
-                render('jira-controls', {}, function (err, html) {
-                    controllers.html(html);
-                    $('.next', controllers).unbind().click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) + resultsCount;
-                        if (context.type === 'search') {
-                            radio('jira search').broadcast(false, context.query, {
-                                start: start,
-                                count: resultsCount
-                            });
-                            return;
-                        }
-                        if (context.type === 'recent') {
-                            radio('jira recent').broadcast(false, context.issue, {
-                                start: start,
-                                count: resultsCount
-                            });
-                            return;
-                        }
-                        radio('jira history').broadcast(false, context.issue, {
-                            start: start,
-                            count: resultsCount
-                        });
-                    });
-                    //}
-                    $('.prev', controllers).unbind().click(function (e) {
-                        var start = parseInt($(this).parent().data('start'), 10) - resultsCount;
-                        if (context.type === 'search') {
-                            radio('jira search').broadcast(false, context.query, {
-                                start: start,
-                                count: resultsCount
-                            });
-                            return;
-                        }
-                        if (context.type === 'recent') {
-                            radio('jira recent').broadcast(false, context.issue, {
-                                start: start,
-                                count: resultsCount
-                            });
-                            return;
-                        }
-                        radio('jira history').broadcast(false, context.issue, {
-                            start: start,
-                            count: resultsCount
-                        });
-                    });
-                    $('.history', controllers).unbind().click(function (e) {
-                        radio('jira history').broadcast(false, context.issue);
-                    });
-                    $('.recent', controllers).unbind().click(function (e) {
-                        radio('jira recent').broadcast(false, context.issue);
-                    });
-                    $('.search', controllers).unbind().click(function (e) {
-                        radio('jira search').broadcast(false, context.query);
-                    });
-                    radio('jira ' + options.jira.tab).broadcast(false,
-                        options.jira.tab === 'search' ? context.query : context.issue);
-                });
+        var initialize = function (fn) {
+            if (initialized) {
+                fn();
+                return;
             }
+            initialized = true;
+            async.parallel([
+                function (cb) {
+                    render('jira-tools', {
+                        query: context.query
+                    }, function (err, html) {
+                        tools.html(html);
+                        var search = $('.search', tools);
+                        search.keydown(function (e) {
+                            if (e.keyCode == 13) {
+                                e.preventDefault();
+                                context.query = $(this).val();
+                                radio('jira search').broadcast(false, context.query);
+                            }
+                        });
+                        var project = $('.in-project', tools);
+                        project.click(function (e) {
+                            var el = $(this);
+                            if (el.hasClass('active')) {
+                                el.removeClass('active');
+                                return;
+                            }
+                            inProject = true;
+                            el.addClass('active');
+                        });
+                        cb(false);
+                    });
+                },
+                function (cb) {
+                    render('jira-controls', {}, function (err, html) {
+                        controllers.html(html);
+                        $('.next', controllers).unbind().click(function (e) {
+                            var start = parseInt($(this).parent().data('start'), 10) + resultsCount;
+                            if (context.type === 'search') {
+                                radio('jira search').broadcast(false, context.query, {
+                                    start: start,
+                                    count: resultsCount
+                                });
+                                return;
+                            }
+                            if (context.type === 'recent') {
+                                radio('jira recent').broadcast(false, context.issue, {
+                                    start: start,
+                                    count: resultsCount
+                                });
+                                return;
+                            }
+                            radio('jira history').broadcast(false, context.issue, {
+                                start: start,
+                                count: resultsCount
+                            });
+                        });
+                        $('.prev', controllers).unbind().click(function (e) {
+                            var start = parseInt($(this).parent().data('start'), 10) - resultsCount;
+                            if (context.type === 'search') {
+                                radio('jira search').broadcast(false, context.query, {
+                                    start: start,
+                                    count: resultsCount
+                                });
+                                return;
+                            }
+                            if (context.type === 'recent') {
+                                radio('jira recent').broadcast(false, context.issue, {
+                                    start: start,
+                                    count: resultsCount
+                                });
+                                return;
+                            }
+                            radio('jira history').broadcast(false, context.issue, {
+                                start: start,
+                                count: resultsCount
+                            });
+                        });
+                        $('.history', controllers).unbind().click(function (e) {
+                            radio('jira history').broadcast(false, context.issue);
+                        });
+                        $('.recent', controllers).unbind().click(function (e) {
+                            radio('jira recent').broadcast(false, context.issue);
+                        });
+                        $('.search', controllers).unbind().click(function (e) {
+                            radio('jira search').broadcast(false, context.query);
+                        });
+                        $('.' + (context.type || options.jira.tab), controllers).addClass('active');
+                        //radio('jira ' + options.jira.tab).broadcast(false,
+                        //options.jira.tab === 'search' ? context.query : context.issue);
+                        cb(false);
+                    });
+                }],
+                function (err, results) {
+                    fn();
+                });
         };
         //page change event
         radio('page change').subscribe(function (err, id) {
             if (id !== 'jira') {
                 return;
             }
-            initialize();
-            page.update(true);
+            initialize(function () {
+                page.update(true);
+            });
         });
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
@@ -469,68 +480,70 @@ var jira = {};
 
         //search request from jira
         radio('jira search').subscribe(function (err, query, paging) {
-            initialize();
-            context.type = 'search';
-            $(this).addClass('active');
-            $('.back', tools).hide();
-            $('.tabs .btn', controllers).removeClass('active');
-            $('.' + context.type, controllers).addClass('active');
-            $('.search', tools).val(query).show();
-            $('.in-project', tools).show();
-            if (!query) {
-                $('.paging', controllers).hide();
-                content.empty();
-                return;
-            }
-            paging = paging || {
-                start: 0,
-                count: resultsCount
-            };
-            context.paging = paging;
-            radio('page load').broadcast(false, 'jira');
-            //jira search
-            context.query = (query = query.match(/^".*"$/ig) ? query : '"' + query + '"');
-            query = 'summary ~ ' + query + ' OR description ~ ' + query + ' OR comment ~ ' + query;
-            if (inProject) {
-                query = 'project = ' + context.issue.project + ' AND (' + query + ')';
-            }
-            searchJira({
-                query: query
-            }, paging, process);
+            initialize(function () {
+                context.type = 'search';
+                $('.back', tools).hide();
+                $('.tabs .btn', controllers).removeClass('active');
+                $('.' + context.type, controllers).addClass('active');
+                $('.search', tools).val(query).show();
+                $('.in-project', tools).show();
+                if (!query) {
+                    $('.paging', controllers).hide();
+                    content.empty();
+                    return;
+                }
+                paging = paging || {
+                    start: 0,
+                    count: resultsCount
+                };
+                context.paging = paging;
+                radio('page load').broadcast(false, 'jira');
+                //jira search
+                context.query = (query = (query.match(/^\s*"[^"]*"\s*$/ig) ? query : '"' + query + '"'));
+                query = 'summary ~ ' + query + ' OR description ~ ' + query + ' OR comment ~ ' + query;
+                if (inProject) {
+                    query = 'project = ' + context.issue.project + ' AND (' + query + ')';
+                }
+                searchJira({
+                    query: query
+                }, paging, process);
+            });
         });
 
         radio('jira history').subscribe(function (err, issue, paging) {
-            initialize();
-            context.type = 'history';
-            $('.search', tools).hide();
-            $('.in-project', tools).hide();
-            $('.back', tools).hide();
-            $('.tabs .btn', controllers).removeClass('active');
-            $('.' + context.type, controllers).addClass('active');
-            paging = paging || {
-                start: 0,
-                count: resultsCount
-            };
-            context.paging = paging;
-            radio('page load').broadcast(false, 'jira');
-            history(issue, paging, process);
+            initialize(function () {
+                context.type = 'history';
+                $('.search', tools).hide();
+                $('.in-project', tools).hide();
+                $('.back', tools).hide();
+                $('.tabs .btn', controllers).removeClass('active');
+                $('.' + context.type, controllers).addClass('active');
+                paging = paging || {
+                    start: 0,
+                    count: resultsCount
+                };
+                context.paging = paging;
+                radio('page load').broadcast(false, 'jira');
+                history(issue, paging, process);
+            });
         });
 
         radio('jira recent').subscribe(function (err, issue, paging) {
-            initialize();
-            context.type = 'recent';
-            $('.search', tools).hide();
-            $('.in-project', tools).hide();
-            $('.back', tools).hide();
-            $('.tabs .btn', controllers).removeClass('active');
-            $('.' + context.type, controllers).addClass('active');
-            paging = paging || {
-                start: 0,
-                count: resultsCount
-            };
-            context.paging = paging;
-            radio('page load').broadcast(false, 'jira');
-            recent(issue, paging, process);
+            initialize(function () {
+                context.type = 'recent';
+                $('.search', tools).hide();
+                $('.in-project', tools).hide();
+                $('.back', tools).hide();
+                $('.tabs .btn', controllers).removeClass('active');
+                $('.' + context.type, controllers).addClass('active');
+                paging = paging || {
+                    start: 0,
+                    count: resultsCount
+                };
+                context.paging = paging;
+                radio('page load').broadcast(false, 'jira');
+                recent(issue, paging, process);
+            });
         });
 
         radio('jira thread loaded').subscribe(function (err, id, thread) {

@@ -43,30 +43,34 @@ var stackoverflow = {};
 
     stackoverflow.init = function (content, tools, controllers, o, options) {
         resultsCount = options.stackoverflow.count;
-        var initialize = function () {
-            if (!initialized) {
-                initialized = true;
-                render('stackoverflow-tools', {
-                    query: context.query
-                }, function (err, html) {
-                    tools.html(html);
-                    $('.search', tools).keydown(function (e) {
-                        if (e.keyCode == 13) {
-                            e.preventDefault();
-                            context.query = $(this).val();
-                            radio('stackoverflow search').broadcast(false, context.query);
-                        }
-                    });
-                });
+        var initialize = function (fn) {
+            if (initialized) {
+                fn();
+                return;
             }
+            initialized = true;
+            render('stackoverflow-tools', {
+                query: context.query
+            }, function (err, html) {
+                tools.html(html);
+                $('.search', tools).keydown(function (e) {
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
+                        context.query = $(this).val();
+                        radio('stackoverflow search').broadcast(false, context.query);
+                    }
+                });
+                fn();
+            });
         };
         //page change event
         radio('page change').subscribe(function (err, id) {
             if (id !== 'stackoverflow') {
                 return;
             }
-            initialize();
-            page.update(true);
+            initialize(function () {
+                page.update(true);
+            });
         });
         //search request from the eye
         radio('eye search').subscribe(function (err, query, filters) {
@@ -134,14 +138,16 @@ var stackoverflow = {};
         radio('stackoverflow search').subscribe(function (err, query, paging) {
             if (!query.match(/^[\s]*[a-zA-Z0-9]+-[0-9]+[\s]*$/ig)) {
                 //issue id has been searched
-                context.query = query;
-                context.paging = paging || { page: 1 };
-                $('.search', tools).val(query);
-                radio('page load').broadcast(false, 'stackoverflow');
-                search(query, function (err, threads, paging) {
-                    radio('page loaded').broadcast(false, 'stackoverflow');
-                    radio('stackoverflow results').broadcast(false, query, threads, paging);
-                }, context.paging);
+                initialize(function () {
+                    context.query = query;
+                    context.paging = paging || { page: 1 };
+                    $('.search', tools).val(query);
+                    radio('page load').broadcast(false, 'stackoverflow');
+                    search(query, function (err, threads, paging) {
+                        radio('page loaded').broadcast(false, 'stackoverflow');
+                        radio('stackoverflow results').broadcast(false, query, threads, paging);
+                    }, context.paging);
+                });
             }
         });
 

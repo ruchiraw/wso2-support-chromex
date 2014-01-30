@@ -53,22 +53,25 @@ var gmail = {};
     gmail.init = function (content, tools, controllers, o, options) {
         resultsCount = options.gmail.count;
         prefix = options.gmail.prefix;
-        var initialize = function () {
-            if (!initialized) {
-                initialized = true;
-                render('gmail-tools', {
-                    query: context.query
-                }, function (err, html) {
-                    tools.html(html);
-                    $('.search', tools).keydown(function (e) {
-                        if (e.keyCode == 13) {
-                            e.preventDefault();
-                            context.query = $(this).val();
-                            radio('gmail search').broadcast(false, context.query);
-                        }
-                    });
-                });
+        var initialize = function (fn) {
+            if (initialized) {
+                fn();
+                return;
             }
+            initialized = true;
+            render('gmail-tools', {
+                query: context.query
+            }, function (err, html) {
+                tools.html(html);
+                $('.search', tools).keydown(function (e) {
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
+                        context.query = $(this).val();
+                        radio('gmail search').broadcast(false, context.query);
+                    }
+                });
+                fn();
+            });
         };
 
         //page change event
@@ -76,8 +79,9 @@ var gmail = {};
             if (id !== 'gmail') {
                 return;
             }
-            initialize();
-            page.update(true);
+            initialize(function () {
+                page.update(true);
+            });
         });
 
         //search request from the eye
@@ -89,13 +93,15 @@ var gmail = {};
         });
         //search request from gmail
         radio('gmail search').subscribe(function (err, query, paging) {
-            paging = paging || { start: 0, count: resultsCount };
-            context.id = null;
-            context.query = query;
-            context.paging = paging;
-            $('.search', tools).val(query);
-            radio('page load').broadcast(false, 'gmail');
-            search(query, paging);
+            initialize(function () {
+                paging = paging || { start: 0, count: resultsCount };
+                context.id = null;
+                context.query = query;
+                context.paging = paging;
+                $('.search', tools).val(query);
+                radio('page load').broadcast(false, 'gmail');
+                search(query, paging);
+            });
         });
 
         //search response from gmail
