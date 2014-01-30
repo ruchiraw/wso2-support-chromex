@@ -190,7 +190,6 @@ var gmail = {};
             matched(thread);
             render('thread', thread, function (err, html) {
                 content.html(html);
-                page.update(true);
                 $('.back', tools).unbind().click(function (e) {
                     radio('gmail searched').broadcast(false, context.query, context.threads, context.paging);
                 }).show();
@@ -238,6 +237,7 @@ var gmail = {};
                         self.siblings('.gmail_extra').toggle();
                         page.update();
                     }).find('.gmail_extra').before('<div class="gmail-extra">...</div>');
+                page.update(true);
             });
         });
     };
