@@ -70,7 +70,7 @@ $(function () {
                             radio('gmail search').broadcast(false, issue.key);
                         }
                         if (opts.jira.issue) {
-                            radio('jira history').broadcast(false, issue);
+                            radio('jira ' + opts.jira.tab).broadcast(false, issue);
                         }
                         radio('page change').broadcast(false, opts.tab);
                     } else {
