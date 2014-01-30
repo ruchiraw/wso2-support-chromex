@@ -207,7 +207,7 @@ var gmail = {};
                         el.removeClass('collapze').addClass('expand');
                     }
                     page.update(true);
-                }).end().show();
+                }).removeClass('expand').addClass('collapze').end().show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body
                     var self = $(this);

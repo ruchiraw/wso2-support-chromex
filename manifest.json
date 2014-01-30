@@ -27,7 +27,7 @@
         "default_icon": {
             "19": "images/icon.gif"
         },
-        "default_title": "Google Mail",
+        "default_title": "WSO2 Support Extension",
         "default_popup": "page.html"
     }
 }

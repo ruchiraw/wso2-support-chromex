@@ -544,7 +544,7 @@ var jira = {};
                     //TODO
                     radio('jira results').broadcast(false, context.query, context.issues, context.paging);
                 }).show();
-                $('.xpand', controllers).find('.btn').unbind().click(function (e) {
+                var button = $('.xpand', controllers).find('.btn').unbind().click(function (e) {
                     var el = $(this);
                     if (el.hasClass('expand')) {
                         $('.messages').find('.summary').addClass('hidden').end()
@@ -558,7 +558,13 @@ var jira = {};
                         el.removeClass('collapze').addClass('expand');
                     }
                     page.update(true);
-                }).end().show();
+                });
+                if (context.type === 'search') {
+                    button.removeClass('expand').addClass('collapze');
+                } else {
+                    button.removeClass('collapze').addClass('expand');
+                }
+                button.end().show();
                 $('.messages', content).on('click', '.message',function (e) {
                     //showing body
                     var self = $(this);
