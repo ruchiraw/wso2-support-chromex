@@ -387,7 +387,13 @@ var jira = {};
                         $('.search', controllers).unbind().click(function (e) {
                             radio('jira search').broadcast(false, context.query);
                         });
-                        $('.' + (context.type || options.jira.tab), controllers).addClass('active');
+                        var tab = context.type || options.jira.tab;
+                        if (tab === 'search') {
+                            $('.search', tools).show();
+                            $('.in-project', tools).show();
+                        }
+                        $('.' + tab, controllers).addClass('active');
+
                         //radio('jira ' + options.jira.tab).broadcast(false,
                         //options.jira.tab === 'search' ? context.query : context.issue);
                         cb(false);

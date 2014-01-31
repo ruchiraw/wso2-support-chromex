@@ -8,6 +8,7 @@
 
 .controls .jira .search {
     background: url('/images/search.png') no-repeat transparent center;
+    display: none;
 }
 
 .controls .jira .btn.active {
