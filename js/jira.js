@@ -325,6 +325,7 @@ var jira = {};
                             var el = $(this);
                             if (el.hasClass('active')) {
                                 el.removeClass('active');
+                                inProject = false;
                                 return;
                             }
                             inProject = true;
